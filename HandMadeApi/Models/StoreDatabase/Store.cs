@@ -1,11 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HandMadeApi.Models.StoreDatabase
 {
     public class Store
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int ID { get; set; }
+        [Key]
+        public string ID { get; set; }
         public string VendorName { get; set; }
         public string Phone { get; set; }
         public string StoreName { get; set; }

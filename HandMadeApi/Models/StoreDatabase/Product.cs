@@ -22,7 +22,7 @@ namespace HandMadeApi.Models.StoreDatabase
         public virtual Category Category { get; set; }
 
         [ForeignKey("Store")]
-        public int StoreID { get; set; }
+        public string StoreID { get; set; }
         public virtual Store Store { get; set; }
 
         public ICollection<Order> Orders { get; set; }

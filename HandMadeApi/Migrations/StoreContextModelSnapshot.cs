@@ -17,7 +17,7 @@ namespace HandMadeApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.3")
+                .HasAnnotation("ProductVersion", "6.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -48,8 +48,8 @@ namespace HandMadeApi.Migrations
 
             modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Client", b =>
                 {
-                    b.Property<int>("ID")
-                        .HasColumnType("int");
+                    b.Property<string>("ID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -81,8 +81,9 @@ namespace HandMadeApi.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ClientID")
-                        .HasColumnType("int");
+                    b.Property<string>("ClientID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
@@ -130,8 +131,9 @@ namespace HandMadeApi.Migrations
                     b.Property<int?>("SaleValue")
                         .HasColumnType("int");
 
-                    b.Property<int>("StoreID")
-                        .HasColumnType("int");
+                    b.Property<string>("StoreID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
 
@@ -150,8 +152,9 @@ namespace HandMadeApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
-                    b.Property<int>("ClientID")
-                        .HasColumnType("int");
+                    b.Property<string>("ClientID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -175,8 +178,8 @@ namespace HandMadeApi.Migrations
 
             modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Store", b =>
                 {
-                    b.Property<int>("ID")
-                        .HasColumnType("int");
+                    b.Property<string>("ID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .IsRequired()

@@ -12,47 +12,47 @@ namespace HandMadeApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StoresController : ControllerBase
+    public class ClientsController : ControllerBase
     {
         private readonly StoreContext _context;
 
-        public StoresController(StoreContext context)
+        public ClientsController(StoreContext context)
         {
             _context = context;
         }
 
-        // GET: api/Stores
+        // GET: api/Clients
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Store>>> GetStores()
+        public async Task<ActionResult<IEnumerable<Client>>> GetClients()
         {
-            return await _context.Stores.ToListAsync();
+            return await _context.Clients.ToListAsync();
         }
 
-        // GET: api/Stores/5
+        // GET: api/Clients/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Store>> GetStore(int id)
+        public async Task<ActionResult<Client>> GetClient(string id)
         {
-            var store = await _context.Stores.FindAsync(id);
+            var client = await _context.Clients.FindAsync(id);
 
-            if (store == null)
+            if (client == null)
             {
                 return NotFound();
             }
 
-            return store;
+            return client;
         }
 
-        // PUT: api/Stores/5
+        // PUT: api/Clients/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStore(int id, Store store)
+        public async Task<IActionResult> PutClient(string id, Client client)
         {
-            if (id != store.ID)
+            if (id != client.ID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(store).State = EntityState.Modified;
+            _context.Entry(client).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace HandMadeApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StoreExists(id))
+                if (!ClientExists(id))
                 {
                     return NotFound();
                 }
@@ -73,19 +73,19 @@ namespace HandMadeApi.Controllers
             return NoContent();
         }
 
-        // POST: api/Stores
+        // POST: api/Clients
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Store>> PostStore(Store store)
+        public async Task<ActionResult<Client>> PostClient(Client client)
         {
-            _context.Stores.Add(store);
+            _context.Clients.Add(client);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (StoreExists(store.ID))
+                if (ClientExists(client.ID))
                 {
                     return Conflict();
                 }
@@ -95,28 +95,28 @@ namespace HandMadeApi.Controllers
                 }
             }
 
-            return CreatedAtAction("GetStore", new { id = store.ID }, store);
+            return CreatedAtAction("GetClient", new { id = client.ID }, client);
         }
 
-        // DELETE: api/Stores/5
+        // DELETE: api/Clients/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStore(int id)
+        public async Task<IActionResult> DeleteClient(string id)
         {
-            var store = await _context.Stores.FindAsync(id);
-            if (store == null)
+            var client = await _context.Clients.FindAsync(id);
+            if (client == null)
             {
                 return NotFound();
             }
 
-            _context.Stores.Remove(store);
+            _context.Clients.Remove(client);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool StoreExists(int id)
+        private bool ClientExists(string id)
         {
-            return _context.Stores.Any(e => e.ID == id);
+            return _context.Clients.Any(e => e.ID == id);
         }
     }
 }
