@@ -7,7 +7,7 @@ namespace HandMadeApi.Models.StoreDatabase
         public int ID { get; set; }
         [ForeignKey("Client")]
         public string ClientID { get; set; }
-        public DateTime OrderDateTime { get; set; }
+        public DateTime? OrderDateTime { get; set; }
         public string? Address { get; set; }
         public string? Note { get; set; }
         public ICollection<Product> Products { get; set; }

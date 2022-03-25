@@ -13,9 +13,9 @@ namespace HandMadeApi.Models.StoreDatabase
         public string? Image { get; set; }
         public int Price { get; set; }
         public int? SaleValue { get; set; }
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
         //Min. time Elapsed to prepare this product in business days
-        public int PreparationDays { get; set; }
+        public int? PreparationDays { get; set; }
 
         [ForeignKey("Category")]
         public int CategoryID { get; set; }
