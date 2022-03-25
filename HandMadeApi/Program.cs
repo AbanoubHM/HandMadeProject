@@ -1,6 +1,8 @@
 using HandMadeApi.Auth;
+using HandMadeApi.Models.StoreDatabase;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
@@ -38,8 +40,9 @@ builder.Services.AddAuthorization(options => {
 });
 builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
-
+builder.Services.AddDbContext<StoreContext>(options => options.UseSqlServer(builder.Configuration["Kestrel:Certificates:Development:Password"]));
 builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 

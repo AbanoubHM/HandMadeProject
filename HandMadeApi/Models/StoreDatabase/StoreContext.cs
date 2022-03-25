@@ -28,7 +28,7 @@ namespace HandMadeApi.Models.StoreDatabase
             modelBuilder.Entity<Product>().ToTable("Product");
             modelBuilder.Entity<Client>().ToTable("Client");
             modelBuilder.Entity<Order>().ToTable("Order");
-            modelBuilder.Entity<Order>().ToTable("ProductRate");
+            modelBuilder.Entity<ProductRate>().ToTable("ProductRate");
         }
 
     }
