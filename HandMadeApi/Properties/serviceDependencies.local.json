@@ -5,7 +5,7 @@
     },
     "mssql1": {
       "secretStore": "LocalSecretsFile",
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/handmadeapidbserver/databases/HandMadeApi_db",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/handmadeapidbserver/databases/HandMadeApi_db",
       "type": "mssql.azure",
       "connectionId": "Kestrel:Certificates:Development:Password"
     }
