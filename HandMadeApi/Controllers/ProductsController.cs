@@ -88,6 +88,7 @@ namespace HandMadeApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
+            
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
@@ -103,6 +104,23 @@ namespace HandMadeApi.Controllers
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.ID == id);
+        }
+
+        //Resize Image
+        private string ResizeImage(IFormFile file)
+        {
+            if (file == null)
+            {
+                return BadRequest();
+            }
+
+            var image = Image.FromStream(file.OpenReadStream());
+            var resizedImage = image.Resize(200, 200);
+            var stream = new System.IO.MemoryStream();
+            resizedImage.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
+            stream.Position = 0;
+
+            return File(stream, "image/jpeg");
         }
     }
 }
