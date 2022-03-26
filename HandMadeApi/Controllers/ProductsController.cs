@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HandMadeApi.Models.StoreDatabase;
+using System.Drawing;
 
 namespace HandMadeApi.Controllers
 {
@@ -25,6 +26,7 @@ namespace HandMadeApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
+            
             return await _context.Products.ToListAsync();
         }
 
@@ -33,7 +35,7 @@ namespace HandMadeApi.Controllers
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
-
+            product.CategoryName = _context.Categories.Where(e => e.ID == product.CategoryID).Select(x => x.Name).FirstOrDefault();
             if (product == null)
             {
                 return NotFound();
@@ -107,20 +109,21 @@ namespace HandMadeApi.Controllers
         }
 
         //Resize Image
-        private string ResizeImage(IFormFile file)
-        {
-            if (file == null)
-            {
-                return BadRequest();
-            }
+        //private string ResizeImage(IFormFile file)
+        //{
+        //    if (file == null)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            var image = Image.FromStream(file.OpenReadStream());
-            var resizedImage = image.Resize(200, 200);
-            var stream = new System.IO.MemoryStream();
-            resizedImage.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
-            stream.Position = 0;
+        //    var image = Image.FromStream(file.OpenReadStream());
 
-            return File(stream, "image/jpeg");
-        }
+        //    var resizedImage = new Bitmap(image, new Size(256, 256));
+        //    var stream = new System.IO.MemoryStream();
+        //    resizedImage.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
+        //    stream.Position = 0;
+
+        //    return File(stream, "image/jpeg");
+        //}
     }
 }

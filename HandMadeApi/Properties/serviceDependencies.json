@@ -5,7 +5,7 @@
     },
     "mssql1": {
       "type": "mssql",
-      "connectionId": "Kestrel:Certificates:Development:Password"
+      "connectionId": "ProductsApiDb"
     }
   }
 }

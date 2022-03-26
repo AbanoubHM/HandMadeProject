@@ -19,6 +19,8 @@ namespace HandMadeApi.Models.StoreDatabase
 
         [ForeignKey("Category")]
         public int CategoryID { get; set; }
+        [NotMapped]
+        public string CategoryName { get; set; }
         public virtual Category Category { get; set; }
 
         [ForeignKey("Store")]

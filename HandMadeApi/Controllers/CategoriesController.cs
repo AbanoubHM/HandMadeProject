@@ -27,6 +27,17 @@ namespace HandMadeApi.Controllers
         {
             return await _context.Categories.ToListAsync();
         }
+        [HttpGet("{id}/products")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(int id) {
+            var category = await _context.Categories.FindAsync(id);
+
+            if (category == null) {
+                return NotFound();
+            }
+
+
+            return  _context.Products.Where(e=>e.CategoryID==category.ID).ToList();
+        }
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
@@ -41,6 +52,7 @@ namespace HandMadeApi.Controllers
 
             return category;
         }
+        
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
