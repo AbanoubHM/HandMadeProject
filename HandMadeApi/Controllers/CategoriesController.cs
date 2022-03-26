@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HandMadeApi.Models.StoreDatabase;
+using HandMadeApi.Models.DTO.Category;
 
 namespace HandMadeApi.Controllers
 {
@@ -28,7 +29,7 @@ namespace HandMadeApi.Controllers
             return await _context.Categories.ToListAsync();
         }
         [HttpGet("{id}/products")]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(int id) {
+        public async Task<ActionResult<IEnumerable<DTOCategoryProducts>>> GetProducts(int id) {
             var category = await _context.Categories.FindAsync(id);
 
             if (category == null) {
@@ -36,7 +37,15 @@ namespace HandMadeApi.Controllers
             }
 
 
-            return  _context.Products.Where(e=>e.CategoryID==category.ID).ToList();
+            return  _context.Products.Where(e=>e.CategoryID==category.ID).Select(x=>new DTOCategoryProducts() {
+                ProductID = x.ID,
+                ProductName=x.Name,
+                CategoryName = category.Name,
+                ProductDescription = x.Description,
+                ProductImage = x.Image,
+                Price = x.Price,
+                SaleValue = x.SaleValue
+            }).ToList();
         }
 
         // GET: api/Categories/5
