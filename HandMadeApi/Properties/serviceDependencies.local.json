@@ -7,7 +7,7 @@
       "secretStore": "LocalSecretsFile",
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/handmadeapidbserver/databases/HandMadeApi_db",
       "type": "mssql.azure",
-      "connectionId": "ProductsApiDb"
+      "connectionId": "ConnectionString"
     }
   }
 }

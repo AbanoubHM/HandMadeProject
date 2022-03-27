@@ -64,7 +64,7 @@ builder.Services.AddAuthorization(options => {
 });
 builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
-builder.Services.AddDbContext<StoreContext>(options => options.UseSqlServer(builder.Configuration["ProductsApiDb"]));
+builder.Services.AddDbContext<StoreContext>(options => options.UseSqlServer(builder.Configuration["connectionString"]));
 builder.Services.AddSwaggerGen();
 
 
