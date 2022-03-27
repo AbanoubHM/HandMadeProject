@@ -63,9 +63,10 @@ builder.Services.AddAuthorization(options => {
     options.AddPolicy("delete:store", policy => policy.Requirements.Add(new HasScopeRequirement("delete:store", domain)));
 });
 builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
-
-builder.Services.AddDbContext<StoreContext>(options => options.UseSqlServer(builder.Configuration["connectionString"]));
+//connection string
+builder.Services.AddDbContext<StoreContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:connectionString"]));
 builder.Services.AddSwaggerGen();
+
 
 
 var app = builder.Build();
