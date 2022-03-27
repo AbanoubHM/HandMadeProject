@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HandMadeApi.Models.StoreDatabase;
 using HandMadeApi.Models.DTO.Category;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HandMadeApi.Controllers
 {
@@ -107,6 +108,7 @@ namespace HandMadeApi.Controllers
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
+        [Authorize("delete:category")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var category = await _context.Categories.FindAsync(id);

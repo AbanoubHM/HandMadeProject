@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HandMadeApi.Models.StoreDatabase;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HandMadeApi.Controllers
 {
@@ -100,6 +101,7 @@ namespace HandMadeApi.Controllers
 
         // DELETE: api/Clients/5
         [HttpDelete("{id}")]
+        [Authorize("delete:client")]
         public async Task<IActionResult> DeleteClient(string id)
         {
             var client = await _context.Clients.FindAsync(id);

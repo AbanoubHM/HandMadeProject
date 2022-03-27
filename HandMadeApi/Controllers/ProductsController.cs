@@ -107,6 +107,7 @@ namespace HandMadeApi.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
+        [Authorize("delete:product")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
 
