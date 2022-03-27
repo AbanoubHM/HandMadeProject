@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HandMadeApi.Controllers {
@@ -16,6 +17,7 @@ namespace HandMadeApi.Controllers {
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
+        [Authorize("read:products")]
         public IEnumerable<WeatherForecast> Get() {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast {
                 Date = DateTime.Now.AddDays(index),
