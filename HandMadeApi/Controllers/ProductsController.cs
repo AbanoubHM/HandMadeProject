@@ -26,10 +26,27 @@ namespace HandMadeApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            
+
             return await _context.Products.ToListAsync();
         }
-
+        // GET: api/Products/Sort/
+        [HttpGet("Sort/{sort}")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetSortedProducts(string sort)
+        {
+            switch (sort)
+            {
+                case "NA":
+                    return await _context.Products.OrderBy(p => p.Name).ToListAsync();
+                case "ND":
+                    return await _context.Products.OrderByDescending(p => p.Name).ToListAsync();
+                case "PA":
+                    return await _context.Products.OrderBy(p => p.Price).ToListAsync();
+                case "PD":
+                    return await _context.Products.OrderByDescending(p => p.Price).ToListAsync();
+                default:
+                    return await _context.Products.ToListAsync();
+            }
+        }
         // GET: api/Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
@@ -90,7 +107,7 @@ namespace HandMadeApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            
+
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
