@@ -13,8 +13,8 @@ namespace HandMadeApi.Models.StoreDatabase
         public int? Age { get; set; }
         public string? Address { get; set; }
 
-        public ICollection<Order> Orders { get; set; }
-        public ICollection<ProductRate> ProductRates { get; set; }
+        public ICollection<Order>? Orders { get; set; }
+        public ICollection<ProductRate>? ProductRates { get; set; }
 
 
 
