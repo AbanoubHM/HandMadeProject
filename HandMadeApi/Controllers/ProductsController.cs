@@ -27,7 +27,8 @@ namespace HandMadeApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string sort, string search, int categoryid, string storeid, int minprice, int maxprice)
         {
-            var products = await _context.Products.ToListAsync();
+            //Select only available products
+            var products = await _context.Products.Where(p => p.Quantity > 0).ToListAsync();
             //sort
             products = sort switch
             {
@@ -35,7 +36,7 @@ namespace HandMadeApi.Controllers
                 "ND" => products.OrderByDescending(p => p.Name).ToList(),
                 "PA" => products.OrderBy(p => p.Price).ToList(),
                 "PD" => products.OrderByDescending(p => p.Price).ToList(),
-                _ => products.ToList(),
+                _ => products.ToList()
             };
             //Search
             if (!string.IsNullOrEmpty(search)) { products = products.Where(p => (p.Name.ToLower().Contains(search.ToLower())) || (p.Description.ToLower().Contains(search.ToLower()))).ToList(); }
