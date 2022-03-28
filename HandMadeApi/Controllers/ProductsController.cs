@@ -25,29 +25,28 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string sort, string search, int categoryid, int minprice, int maxprice)
         {
-
-            return await _context.Products.ToListAsync();
-        }
-        // GET: api/Products/Sort/
-        [HttpGet("Sort/{sort}")]
-        public async Task<ActionResult<IEnumerable<Product>>> GetSortedProducts(string sort)
-        {
-            switch (sort)
+            var products = await _context.Products.ToListAsync();
+            //sort
+            products = sort switch
             {
-                case "NA":
-                    return await _context.Products.OrderBy(p => p.Name).ToListAsync();
-                case "ND":
-                    return await _context.Products.OrderByDescending(p => p.Name).ToListAsync();
-                case "PA":
-                    return await _context.Products.OrderBy(p => p.Price).ToListAsync();
-                case "PD":
-                    return await _context.Products.OrderByDescending(p => p.Price).ToListAsync();
-                default:
-                    return await _context.Products.ToListAsync();
-            }
+                "NA" => products.OrderBy(p => p.Name).ToList(),
+                "ND" => products.OrderByDescending(p => p.Name).ToList(),
+                "PA" => products.OrderBy(p => p.Price).ToList(),
+                "PD" => products.OrderByDescending(p => p.Price).ToList(),
+                _ => products.ToList(),
+            };
+            //Search
+            if (!string.IsNullOrEmpty(search)) { products = products.Where(p => (p.Name.ToLower().Contains(search.ToLower())) || (p.Description.ToLower().Contains(search.ToLower()))).ToList(); }
+            //select category
+            if (categoryid != 0){products = products.Where(p => p.CategoryID == categoryid).ToList();}
+            //filter price
+            if (minprice != 0){products = products.Where(p => p.Price >= minprice).ToList();}
+            if (maxprice != 0){products = products.Where(p => p.Price <= maxprice).ToList();}
+            return products.ToList();
         }
+
         // GET: api/Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
