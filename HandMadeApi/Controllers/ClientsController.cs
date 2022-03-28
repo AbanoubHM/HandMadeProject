@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HandMadeApi.Models.StoreDatabase;
 using Microsoft.AspNetCore.Authorization;
+using HandMadeApi.Auth;
+using RestSharp;
+using System.Text.Json;
+using RestSharp.Authenticators;
 
 namespace HandMadeApi.Controllers
 {
@@ -95,7 +99,7 @@ namespace HandMadeApi.Controllers
                     throw;
                 }
             }
-
+            updateRole(client.ID);
             return CreatedAtAction("GetClient", new { id = client.ID }, client);
         }
 
@@ -119,6 +123,43 @@ namespace HandMadeApi.Controllers
         private bool ClientExists(string id)
         {
             return _context.Clients.Any(e => e.ID == id);
+        }
+
+        /// <summary>
+        /// Gets an access token from authorization service
+        /// </summary>
+        /// <returns> a temporary access token</returns>
+        private static AccessToken getAccessToken() {
+            var client = new RestClient("https://dev-vxrkxu-x.us.auth0.com/oauth/token");
+
+
+            var request = new RestRequest() { Method = Method.Post }.AddJsonBody(new {
+                client_id = "HxBxwjeFxRNSohGKa0XHsdqYfH2E8iYK",
+                client_secret = "1ljixj5PzsvsJEbI2wlJGvBKTMH8CZlFhXQ5jWze4xpQ_RIDNPNGxpdDE_7zce8q",
+                audience = "https://dev-vxrkxu-x.us.auth0.com/api/v2/",
+                grant_type = "client_credentials"
+            });
+
+
+            Task<RestResponse> ress = client.PostAsync(request);
+
+            AccessToken cc = JsonSerializer.Deserialize<AccessToken>(ress.Result.Content);
+            return cc;
+        }
+
+
+        private static async void updateRole(string usrId) {
+            
+            var url = $"https://dev-vxrkxu-x.us.auth0.com/api/v2/users/{usrId}/roles";
+            var role = "rol_hoaMhd72umuo4Z3I";
+            var client = new RestClient(url);
+            var token = getAccessToken().access_token;
+            client.Authenticator = new JwtAuthenticator(token);
+            var request = new RestRequest().AddJsonBody(new { roles = new[] { role } });
+
+            var response = client.PostAsync(request).GetAwaiter().GetResult();
+            Console.WriteLine(response.Content);
+
         }
     }
 }
