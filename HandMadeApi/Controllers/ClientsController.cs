@@ -87,6 +87,7 @@ namespace HandMadeApi.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                updateRole(client.ID);
             }
             catch (DbUpdateException)
             {
@@ -99,7 +100,7 @@ namespace HandMadeApi.Controllers
                     throw;
                 }
             }
-            updateRole(client.ID);
+            
             return CreatedAtAction("GetClient", new { id = client.ID }, client);
         }
 
@@ -148,10 +149,9 @@ namespace HandMadeApi.Controllers
         }
 
 
-        private static async void updateRole(string usrId) {
+        public static async void updateRole(string usrId,string role= "rol_hoaMhd72umuo4Z3I") {
             
             var url = $"https://dev-vxrkxu-x.us.auth0.com/api/v2/users/{usrId}/roles";
-            var role = "rol_hoaMhd72umuo4Z3I";
             var client = new RestClient(url);
             var token = getAccessToken().access_token;
             client.Authenticator = new JwtAuthenticator(token);

@@ -10,10 +10,10 @@ namespace HandMadeApi.Models.StoreDatabase
         public int RateValue { get; set; }
         [ForeignKey("Product")]
         public int ProductID { get; set; }
-        public virtual Product Product { get; set; }
+        public virtual Product? Product { get; set; }
         [ForeignKey("Client")]
         public string ClientID { get; set; }
-        public virtual Client Client{ get; set; }
+        public virtual Client? Client{ get; set; }
 
     }
 }

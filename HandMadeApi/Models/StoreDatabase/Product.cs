@@ -27,9 +27,9 @@ namespace HandMadeApi.Models.StoreDatabase
         public string StoreID { get; set; }
         public virtual Store Store { get; set; }
 
-        public ICollection<Order> Orders { get; set; }
+        public ICollection<Order>? Orders { get; set; }
 
-        public ICollection<ProductRate> ProductRates { get; set; }
+        public ICollection<ProductRate>? ProductRates { get; set; }
 
 
 

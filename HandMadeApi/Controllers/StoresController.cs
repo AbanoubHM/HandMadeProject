@@ -83,6 +83,10 @@ namespace HandMadeApi.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                Client c1 = _context.Clients.Where(e => e.ID == store.ID).FirstOrDefault();
+                _context.Clients.Remove(c1);
+                _context.SaveChanges();
+                ClientsController.updateRole(store.ID, "rol_A4MqRdrRIF1ZiPeE");
             }
             catch (DbUpdateException)
             {
@@ -95,7 +99,7 @@ namespace HandMadeApi.Controllers
                     throw;
                 }
             }
-
+            
             return CreatedAtAction("GetStore", new { id = store.ID }, store);
         }
 

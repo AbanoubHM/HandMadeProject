@@ -14,7 +14,7 @@ namespace HandMadeApi.Models.StoreDatabase
         public string? StoreImg { get; set; }
         public string Address { get; set; }
 
-        public virtual ICollection<Product> Products { get; set; }
+        public virtual ICollection<Product>? Products { get; set; }
 
 
     }
