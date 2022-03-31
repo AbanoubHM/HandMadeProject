@@ -47,7 +47,7 @@ namespace HandMadeApi.Controllers
             //filter price
             if (minprice != 0){products = products.Where(p => p.Price >= minprice).ToList();}
             if (maxprice != 0){products = products.Where(p => p.Price <= maxprice).ToList();}
-            return products.ToList();
+            return products;
         }
 
         // GET: api/Products/5

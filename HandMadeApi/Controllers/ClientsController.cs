@@ -161,7 +161,7 @@ namespace HandMadeApi.Controllers
 
         }
 
-        [HttpGet("role/{id}")]
+        [HttpGet("{id}/role")]
         public async Task<ActionResult<string>> GetRole(string id) {
             var url = $"https://dev-vxrkxu-x.us.auth0.com/api/v2/users/{id}/roles";
             var client = new RestClient(url);
