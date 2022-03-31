@@ -42,6 +42,21 @@ namespace HandMadeApi.Controllers
 
             return store;
         }
+        
+        [HttpGet("{id}/products")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string id)
+        {
+            var store = await _context.Stores.FindAsync(id);
+
+            if (store == null)
+            {
+                return NotFound();
+            }
+            var products = await _context.Products.Where(p => p.StoreID == id).ToListAsync();
+
+
+            return products;
+        }
 
         // PUT: api/Stores/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
