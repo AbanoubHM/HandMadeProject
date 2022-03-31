@@ -158,8 +158,27 @@ namespace HandMadeApi.Controllers
             var request = new RestRequest().AddJsonBody(new { roles = new[] { role } });
 
             var response = client.PostAsync(request).GetAwaiter().GetResult();
-            Console.WriteLine(response.Content);
 
         }
+
+        [HttpGet("role/{id}")]
+        public async Task<ActionResult<string>> GetRole(string id) {
+            var url = $"https://dev-vxrkxu-x.us.auth0.com/api/v2/users/{id}/roles";
+            var client = new RestClient(url);
+            var token = getAccessToken().access_token;
+            client.Authenticator = new JwtAuthenticator(token);
+            var request = new RestRequest();
+
+            var response = client.GetAsync(request).GetAwaiter().GetResult();
+            List<UserRole> userRoles = JsonSerializer.Deserialize<List<UserRole>>(response.Content);
+            foreach (var item in userRoles) {
+                if (item.id == "rol_A4MqRdrRIF1ZiPeE") {
+                    return "Vendor";
+                }
+            }
+            return "Client";
+
+        }
+
     }
 }
