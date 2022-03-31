@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using HandMadeApi.Models.StoreDatabase;
 using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
+using HandMadeApi.Models.DTO.Products;
 
 namespace HandMadeApi.Controllers
 {
@@ -99,9 +100,21 @@ namespace HandMadeApi.Controllers
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<ProductsDTO>> PostProduct(ProductsDTO product)
         {
-            _context.Products.Add(product);
+            var productToAdd = new Product
+            {
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                SaleValue = product.SaleValue,
+                Quantity = product.Quantity,
+                PreparationDays = product.PreparationDays,
+                CategoryID = product.CategoryID,
+                Image = product.Image,
+                StoreID = product.StoreID
+    };
+            _context.Products.Add(productToAdd);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProduct", new { id = product.ID }, product);
