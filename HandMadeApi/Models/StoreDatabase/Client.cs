@@ -10,10 +10,12 @@ namespace HandMadeApi.Models.StoreDatabase
         public string ID { get; set; }
         public string Name { get; set; }
         public string? ImageUrl { get; set; }
-        public int? Age { get; set; }
-        public string? Address { get; set; }
+        public string? Street { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? Phone { get; set; }
 
-        public ICollection<Order>? Orders { get; set; }
+        public ICollection<OrderHeader>? Orders { get; set; }
         public ICollection<ProductRate>? ProductRates { get; set; }
 
 

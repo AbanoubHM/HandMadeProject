@@ -2,16 +2,20 @@
 
 namespace HandMadeApi.Models.StoreDatabase
 {
-    public class Order
+    public class OrderHeader
     {
         public int ID { get; set; }
         [ForeignKey("Client")]
         public string ClientID { get; set; }
         public DateTime? OrderDateTime { get; set; }
-        public string? Address { get; set; }
+        public string? Phone { get; set; }
+        public string? Street { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
         public string? Note { get; set; }
-        public ICollection<Product>? Products  { get; set; }=new List<Product>();
+        public bool? Paid { get; set; }
         public virtual Client? Client { get; set; }
+        public virtual ICollection<OrderDetails>? OrderDetails { get; set; }
 
 
 
