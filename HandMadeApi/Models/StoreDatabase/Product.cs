@@ -7,7 +7,7 @@ namespace HandMadeApi.Models.StoreDatabase
     {
         [Key]
         public int ID { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public string? Description { get; set; }
         //Image is nullable to be edited
         public string? Image { get; set; }
@@ -18,13 +18,13 @@ namespace HandMadeApi.Models.StoreDatabase
         public int? PreparationDays { get; set; }
 
         [ForeignKey("Category")]
-        public int CategoryID { get; set; }
+        public int? CategoryID { get; set; }
         [NotMapped]
         public string? CategoryName { get; set; }
         public virtual Category? Category { get; set; }
 
         [ForeignKey("Store")]
-        public string StoreID { get; set; }
+        public string? StoreID { get; set; }
         public virtual Store? Store { get; set; }
 
         public ICollection<Order>? Orders { get; set; }

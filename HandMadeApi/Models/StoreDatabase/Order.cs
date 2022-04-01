@@ -10,7 +10,7 @@ namespace HandMadeApi.Models.StoreDatabase
         public DateTime? OrderDateTime { get; set; }
         public string? Address { get; set; }
         public string? Note { get; set; }
-        public ICollection<Product>? Products { get; set; }
+        public ICollection<Product>? Products  { get; set; }=new List<Product>();
         public virtual Client? Client { get; set; }
 
 

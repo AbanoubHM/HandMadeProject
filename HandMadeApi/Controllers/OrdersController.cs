@@ -33,7 +33,8 @@ namespace HandMadeApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+
+            var order = _context.Orders.Include(w => w.Products).SingleOrDefault(x => x.ID == id);
 
             if (order == null)
             {
@@ -77,8 +78,17 @@ namespace HandMadeApi.Controllers
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder(Order order)
-        {
+        public async Task<ActionResult<Order>> PostOrder(Order order) {
+            List<Product> products = new List<Product>();
+            foreach (var item in order.Products) {
+               Product p = _context.Products.Find(item.ID);
+                products.Add(p);
+            }
+            order.Products = products;
+            //Product p = await _context.Products.FindAsync(id);
+            //order.Products.Add(p);
+
+
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
