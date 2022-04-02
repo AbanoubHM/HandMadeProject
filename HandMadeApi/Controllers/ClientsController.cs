@@ -12,6 +12,7 @@ using HandMadeApi.Auth;
 using RestSharp;
 using System.Text.Json;
 using RestSharp.Authenticators;
+using HandMadeApi.Models.StoreDatabase.Favourite;
 
 namespace HandMadeApi.Controllers
 {
@@ -100,7 +101,7 @@ namespace HandMadeApi.Controllers
                     throw;
                 }
             }
-            
+
             return CreatedAtAction("GetClient", new { id = client.ID }, client);
         }
 
@@ -130,11 +131,13 @@ namespace HandMadeApi.Controllers
         /// Gets an access token from authorization service
         /// </summary>
         /// <returns> a temporary access token</returns>
-        private static AccessToken getAccessToken() {
+        private static AccessToken getAccessToken()
+        {
             var client = new RestClient("https://dev-vxrkxu-x.us.auth0.com/oauth/token");
 
 
-            var request = new RestRequest() { Method = Method.Post }.AddJsonBody(new {
+            var request = new RestRequest() { Method = Method.Post }.AddJsonBody(new
+            {
                 client_id = "HxBxwjeFxRNSohGKa0XHsdqYfH2E8iYK",
                 client_secret = "1ljixj5PzsvsJEbI2wlJGvBKTMH8CZlFhXQ5jWze4xpQ_RIDNPNGxpdDE_7zce8q",
                 audience = "https://dev-vxrkxu-x.us.auth0.com/api/v2/",
@@ -149,8 +152,9 @@ namespace HandMadeApi.Controllers
         }
 
 
-        public static async void updateRole(string usrId,string role= "rol_hoaMhd72umuo4Z3I") {
-            
+        public static async void updateRole(string usrId, string role = "rol_hoaMhd72umuo4Z3I")
+        {
+
             var url = $"https://dev-vxrkxu-x.us.auth0.com/api/v2/users/{usrId}/roles";
             var client = new RestClient(url);
             var token = getAccessToken().access_token;
@@ -162,7 +166,8 @@ namespace HandMadeApi.Controllers
         }
 
         [HttpGet("{id}/role")]
-        public async Task<ActionResult<string>> GetRole(string id) {
+        public async Task<ActionResult<string>> GetRole(string id)
+        {
             var url = $"https://dev-vxrkxu-x.us.auth0.com/api/v2/users/{id}/roles";
             var client = new RestClient(url);
             var token = getAccessToken().access_token;
@@ -171,12 +176,30 @@ namespace HandMadeApi.Controllers
 
             var response = client.GetAsync(request).GetAwaiter().GetResult();
             List<UserRole> userRoles = JsonSerializer.Deserialize<List<UserRole>>(response.Content);
-            foreach (var item in userRoles) {
-                if (item.id == "rol_A4MqRdrRIF1ZiPeE") {
+            foreach (var item in userRoles)
+            {
+                if (item.id == "rol_A4MqRdrRIF1ZiPeE")
+                {
                     return "Vendor";
                 }
             }
             return "Client";
+
+
+        }
+
+        // GET: api/Clients/fav/5
+        [HttpGet("Favourite/{id}")]
+        public async Task<ActionResult<IEnumerable<Fav>>> GetClientFavourites(string id)
+        {
+            var clientfav = await _context.Favs.Where(x => x.UserID == id).ToListAsync();
+
+            if (clientfav == null)
+            {
+                return NotFound();
+            }
+
+            return clientfav;
 
         }
 
