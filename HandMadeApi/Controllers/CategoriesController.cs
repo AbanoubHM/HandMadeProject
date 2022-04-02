@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using HandMadeApi.Models.StoreDatabase;
 using HandMadeApi.Models.DTO.Category;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 
 namespace HandMadeApi.Controllers
 {
@@ -17,10 +18,13 @@ namespace HandMadeApi.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly StoreContext _context;
+        private readonly IMapper _mapper;
 
-        public CategoriesController(StoreContext context)
+
+        public CategoriesController(StoreContext context,IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Categories
@@ -32,21 +36,22 @@ namespace HandMadeApi.Controllers
         [HttpGet("{id}/products")]
         public async Task<ActionResult<IEnumerable<DTOCategoryProducts>>> GetProducts(int id) {
             var category = await _context.Categories.FindAsync(id);
-
             if (category == null) {
                 return NotFound();
             }
 
-
-            return  _context.Products.Where(e=>e.CategoryID==category.ID).Select(x=>new DTOCategoryProducts() {
-                ProductID = x.ID,
-                ProductName=x.Name,
-                CategoryName = category.Name,
-                ProductDescription = x.Description,
-                ProductImage = x.Image,
-                Price = x.Price,
-                SaleValue = x.SaleValue
-            }).ToList();
+            List<Product> prods = _context.Products.Where(e => e.CategoryID == category.ID).ToList();
+            List<DTOCategoryProducts> test= _mapper.Map<List<DTOCategoryProducts>>(prods);
+            return test;
+            //    _context.Products.Where(e=>e.CategoryID==category.ID).Select(x=>new DTOCategoryProducts() {
+            //    ProductID = x.ID,
+            //    ProductName=x.Name,
+            //    CategoryName = category.Name,
+            //    ProductDescription = x.Description,
+            //    ProductImage = x.Image,
+            //    Price = x.Price,
+            //    SaleValue = x.SaleValue
+            //}).ToList();
         }
 
         // GET: api/Categories/5
