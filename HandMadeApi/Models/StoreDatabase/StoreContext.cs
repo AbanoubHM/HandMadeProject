@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using HandMadeApi.Models.StoreDatabase.Favourite;
 
 namespace HandMadeApi.Models.StoreDatabase
 {
@@ -21,6 +22,7 @@ namespace HandMadeApi.Models.StoreDatabase
         public DbSet<CartHeader> CartHeaders { get; set; }
         public DbSet<CartDetails> CartDetails { get; set; }
         public DbSet<ProductRate> ProductRates { get; set; }
+        public DbSet<Fav> Favs { get; set; }
 
 
         //To prevent Polarized table names
@@ -33,6 +35,7 @@ namespace HandMadeApi.Models.StoreDatabase
             modelBuilder.Entity<OrderHeader>().ToTable("OrderHeader");
             modelBuilder.Entity<CartHeader>().ToTable("CartHeader");
             modelBuilder.Entity<ProductRate>().ToTable("ProductRate");
+            modelBuilder.Entity<Fav>().ToTable("Favourite");
         }
 
     }

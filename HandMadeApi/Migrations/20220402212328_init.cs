@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HandMadeApi.Migrations
 {
-    public partial class Init2 : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -65,7 +65,7 @@ namespace HandMadeApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ClientID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    ClientID = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -74,8 +74,7 @@ namespace HandMadeApi.Migrations
                         name: "FK_CartHeader_Client_ClientID",
                         column: x => x.ClientID,
                         principalTable: "Client",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -141,8 +140,8 @@ namespace HandMadeApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CartHeaderID = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
+                    CartHeaderID = table.Column<int>(type: "int", nullable: false),
                     ProductID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -156,6 +155,32 @@ namespace HandMadeApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CartDetails_Product_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Product",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Favourite",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Favourite", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Favourite_Client_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Client",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Favourite_Product_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Product",
                         principalColumn: "ID",
@@ -234,6 +259,16 @@ namespace HandMadeApi.Migrations
                 column: "ClientID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Favourite_ProductID",
+                table: "Favourite",
+                column: "ProductID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Favourite_UserID",
+                table: "Favourite",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderDetails_OrderHeaderID",
                 table: "OrderDetails",
                 column: "OrderHeaderID");
@@ -273,6 +308,9 @@ namespace HandMadeApi.Migrations
         {
             migrationBuilder.DropTable(
                 name: "CartDetails");
+
+            migrationBuilder.DropTable(
+                name: "Favourite");
 
             migrationBuilder.DropTable(
                 name: "OrderDetails");

@@ -57,7 +57,6 @@ namespace HandMadeApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
                     b.Property<string>("ClientID")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
@@ -117,6 +116,30 @@ namespace HandMadeApi.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Client", (string)null);
+                });
+
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Favourite.Fav", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ProductID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Favourite", (string)null);
                 });
 
             modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.OrderDetails", b =>
@@ -298,7 +321,7 @@ namespace HandMadeApi.Migrations
 
             modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.CartDetails", b =>
                 {
-                    b.HasOne("HandMadeApi.Models.StoreDatabase.CartHeader", null)
+                    b.HasOne("HandMadeApi.Models.StoreDatabase.CartHeader", "CartHeader")
                         .WithMany("CartDetails")
                         .HasForeignKey("CartHeaderID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -310,6 +333,8 @@ namespace HandMadeApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("CartHeader");
+
                     b.Navigation("Product");
                 });
 
@@ -317,11 +342,28 @@ namespace HandMadeApi.Migrations
                 {
                     b.HasOne("HandMadeApi.Models.StoreDatabase.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("ClientID")
+                        .HasForeignKey("ClientID");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Favourite.Fav", b =>
+                {
+                    b.HasOne("HandMadeApi.Models.StoreDatabase.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HandMadeApi.Models.StoreDatabase.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.OrderDetails", b =>

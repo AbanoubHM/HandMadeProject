@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HandMadeApi.Models.StoreDatabase.Favourite;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HandMadeApi.Models.StoreDatabase
@@ -22,7 +23,6 @@ namespace HandMadeApi.Models.StoreDatabase
         [NotMapped]
         public string? CategoryName { get; set; }
         public virtual Category? Category { get; set; }
-
         [ForeignKey("Store")]
         public string? StoreID { get; set; }
         public virtual Store? Store { get; set; }
