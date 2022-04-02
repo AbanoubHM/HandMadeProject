@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HandMadeApi.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20220401204430_Init2")]
+    [Migration("20220402102844_Init2")]
     partial class Init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.2")
+                .HasAnnotation("ProductVersion", "6.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -36,6 +36,9 @@ namespace HandMadeApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -130,6 +133,9 @@ namespace HandMadeApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
