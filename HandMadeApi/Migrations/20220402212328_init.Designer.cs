@@ -12,17 +12,61 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HandMadeApi.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20220325223835_Init")]
-    partial class Init
+    [Migration("20220402212328_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.2")
+                .HasAnnotation("ProductVersion", "6.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.CartDetails", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<int>("CartHeaderID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CartHeaderID");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("CartDetails");
+                });
+
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.CartHeader", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<string>("ClientID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ClientID");
+
+                    b.ToTable("CartHeader", (string)null);
+                });
 
             modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Category", b =>
                 {
@@ -52,11 +96,8 @@ namespace HandMadeApi.Migrations
                     b.Property<string>("ID")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Address")
+                    b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Age")
-                        .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
@@ -65,12 +106,21 @@ namespace HandMadeApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
                     b.ToTable("Client", (string)null);
                 });
 
-            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Order", b =>
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Favourite.Fav", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -78,7 +128,57 @@ namespace HandMadeApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
-                    b.Property<string>("Address")
+                    b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ProductID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Favourite", (string)null);
+                });
+
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.OrderDetails", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<int>("OrderHeaderID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("OrderHeaderID");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("OrderDetails");
+                });
+
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.OrderHeader", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ClientID")
@@ -91,11 +191,23 @@ namespace HandMadeApi.Migrations
                     b.Property<DateTime?>("OrderDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool?>("Paid")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
                     b.HasIndex("ClientID");
 
-                    b.ToTable("Order", (string)null);
+                    b.ToTable("OrderHeader", (string)null);
                 });
 
             modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Product", b =>
@@ -106,7 +218,7 @@ namespace HandMadeApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
-                    b.Property<int>("CategoryID")
+                    b.Property<int?>("CategoryID")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -116,7 +228,6 @@ namespace HandMadeApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PreparationDays")
@@ -132,7 +243,6 @@ namespace HandMadeApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("StoreID")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
@@ -182,12 +292,14 @@ namespace HandMadeApi.Migrations
                     b.Property<string>("ID")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
+                    b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StoreImg")
@@ -195,6 +307,9 @@ namespace HandMadeApi.Migrations
 
                     b.Property<string>("StoreName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VendorName")
@@ -206,22 +321,71 @@ namespace HandMadeApi.Migrations
                     b.ToTable("Store", (string)null);
                 });
 
-            modelBuilder.Entity("OrderProduct", b =>
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.CartDetails", b =>
                 {
-                    b.Property<int>("OrdersID")
-                        .HasColumnType("int");
+                    b.HasOne("HandMadeApi.Models.StoreDatabase.CartHeader", "CartHeader")
+                        .WithMany("CartDetails")
+                        .HasForeignKey("CartHeaderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("ProductsID")
-                        .HasColumnType("int");
+                    b.HasOne("HandMadeApi.Models.StoreDatabase.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasKey("OrdersID", "ProductsID");
+                    b.Navigation("CartHeader");
 
-                    b.HasIndex("ProductsID");
-
-                    b.ToTable("OrderProduct");
+                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Order", b =>
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.CartHeader", b =>
+                {
+                    b.HasOne("HandMadeApi.Models.StoreDatabase.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientID");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Favourite.Fav", b =>
+                {
+                    b.HasOne("HandMadeApi.Models.StoreDatabase.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HandMadeApi.Models.StoreDatabase.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.OrderDetails", b =>
+                {
+                    b.HasOne("HandMadeApi.Models.StoreDatabase.OrderHeader", null)
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderHeaderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HandMadeApi.Models.StoreDatabase.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.OrderHeader", b =>
                 {
                     b.HasOne("HandMadeApi.Models.StoreDatabase.Client", "Client")
                         .WithMany("Orders")
@@ -236,15 +400,11 @@ namespace HandMadeApi.Migrations
                 {
                     b.HasOne("HandMadeApi.Models.StoreDatabase.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CategoryID");
 
                     b.HasOne("HandMadeApi.Models.StoreDatabase.Store", "Store")
                         .WithMany("Products")
-                        .HasForeignKey("StoreID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StoreID");
 
                     b.Navigation("Category");
 
@@ -270,19 +430,9 @@ namespace HandMadeApi.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("OrderProduct", b =>
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.CartHeader", b =>
                 {
-                    b.HasOne("HandMadeApi.Models.StoreDatabase.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrdersID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HandMadeApi.Models.StoreDatabase.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("CartDetails");
                 });
 
             modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Category", b =>
@@ -295,6 +445,11 @@ namespace HandMadeApi.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("ProductRates");
+                });
+
+            modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.OrderHeader", b =>
+                {
+                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("HandMadeApi.Models.StoreDatabase.Product", b =>

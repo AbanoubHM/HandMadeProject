@@ -15,7 +15,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowSpecificOrigin",
         builder => {

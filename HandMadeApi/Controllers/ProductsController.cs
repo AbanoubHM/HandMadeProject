@@ -50,6 +50,37 @@ namespace HandMadeApi.Controllers
             if (maxprice != 0){products = products.Where(p => p.Price <= maxprice).ToList();}
             return products;
         }
+        // GET: api/Products/1/rate
+        [HttpGet("{id}/Reviews")]
+        public async Task<ActionResult<IEnumerable<ProductRate>>> GetProductRate(int id)
+        {
+            var productRates = await _context.ProductRates.Where(p => p.ProductID == id).ToListAsync();
+            if (productRates == null)
+            {
+                return NotFound();
+            }
+            var TotalRate = 0;
+            foreach (var item in productRates)
+            {
+                TotalRate += item.RateValue;
+            }
+            var AvgRate = TotalRate / productRates.Count();
+            return productRates;
+        }
+        //Get: api/Products/1/avgrate
+        [HttpGet("{id}/AvgRate")]
+        public async Task<ActionResult<int>> GetAvgRate(int id)
+        {
+            var productRates = await _context.ProductRates.Where(p => p.ProductID == id).ToListAsync();
+            var TotalRate = 0;
+            foreach (var item in productRates)
+            {
+                TotalRate += item.RateValue;
+            }
+            var AvgRate = TotalRate / productRates.Count();
+            return AvgRate;
+        }
+
 
         // GET: api/Products/5
         [HttpGet("{id}")]

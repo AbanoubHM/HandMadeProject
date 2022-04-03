@@ -28,21 +28,6 @@ namespace HandMadeApi.Controllers
         {
             return await _context.ProductRates.ToListAsync();
         }
-
-        // GET: api/ProductRates/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProductRate>> GetProductRate(int id)
-        {
-            var productRate = await _context.ProductRates.FindAsync(id);
-
-            if (productRate == null)
-            {
-                return NotFound();
-            }
-
-            return productRate;
-        }
-
         // PUT: api/ProductRates/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
