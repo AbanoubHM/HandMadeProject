@@ -13,6 +13,7 @@ using RestSharp;
 using System.Text.Json;
 using RestSharp.Authenticators;
 using HandMadeApi.Models.StoreDatabase.Favourite;
+using HandMadeApi.Models.DTO.Favourite;
 
 namespace HandMadeApi.Controllers
 {
@@ -190,16 +191,28 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Clients/fav/5
         [HttpGet("Favourite/{id}")]
-        public async Task<ActionResult<IEnumerable<Fav>>> GetClientFavourites(string id)
+        public async Task<ActionResult<IEnumerable<FavouriteDto>>> GetClientFavourites(string id)
         {
-            var clientfav = await _context.Favs.Where(x => x.UserID == id).ToListAsync();
+            var clientfavs = await _context.Favs.Where(x => x.UserID == id).ToListAsync();
 
-            if (clientfav == null)
+            if (clientfavs == null)
             {
                 return NotFound();
             }
-
-            return clientfav;
+            List<FavouriteDto> favourites = new List<FavouriteDto>();
+            foreach (var favourite in clientfavs)
+            {
+                Product product = await _context.Products.FindAsync(favourite.ProductID);
+                FavouriteDto favouriteDto = new FavouriteDto() 
+                { ProductID= product.ID, 
+                    Image = product.Image, 
+                    Name = product.Name,
+                    Price = (int)(product.Price - product.SaleValue),
+                    Quantity = product.Quantity
+                };
+                favourites.Add(favouriteDto);
+            }
+            return favourites;
         }
         [HttpPost("Favourite/{id}")]
         public async Task<ActionResult<Fav>> PostClientFavourite(string id, Fav fav)
