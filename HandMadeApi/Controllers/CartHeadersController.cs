@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HandMadeApi.Models.StoreDatabase;
+using HandMadeApi.Models.DTO.Products;
 
 namespace HandMadeApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Cart")]
     [ApiController]
     public class CartHeadersController : ControllerBase
     {
@@ -30,16 +31,25 @@ namespace HandMadeApi.Controllers
 
         // GET: api/CartHeaders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CartHeader>> GetCartHeader(int id)
+        public async Task<ActionResult<IEnumerable<CartProduct>>> GetCartHeader(string id)
         {
-            var cartHeader = await _context.CartHeaders.FindAsync(id);
+            var cartHeader = await _context.CartHeaders.Where(c => c.ClientID == id).FirstOrDefaultAsync();
 
             if (cartHeader == null)
             {
                 return NotFound();
             }
 
-            return cartHeader;
+            List<CartDetails> cartDetails =await _context.CartDetails.Where(c=>c.CartHeaderID == cartHeader.ID).ToListAsync();
+            List<CartProduct> products=new List<CartProduct>();
+            foreach (var item in cartDetails) {
+                Product p1 = await _context.Products.FindAsync(item.ProductID);
+                if (p1 != null) {
+                    CartProduct pp = new CartProduct() { product = p1,Quantity=item.Quantity};
+                    products.Add(pp);
+                }
+            }
+            return products;
         }
 
         // PUT: api/CartHeaders/5
