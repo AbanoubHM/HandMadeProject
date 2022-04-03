@@ -200,8 +200,34 @@ namespace HandMadeApi.Controllers
             }
 
             return clientfav;
-
         }
+        [HttpPost("Favourite/{id}")]
+        public async Task<ActionResult<Fav>> PostClientFavourite(string id, Fav fav)
+        {
+            fav.UserID = id;
+            _context.Favs.Add(fav);
+            try
+            {
+            
+                
+                
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                //if (FavExists(fav.ID))
+                //{
+                //    return Conflict();
+                //}
+                //else
+                //{
+                //    throw;
+                //}
+            }
+
+            return CreatedAtAction("GetClientFavourites", new { id = fav.ID }, fav);
+        }
+
 
     }
 }
