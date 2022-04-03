@@ -86,12 +86,23 @@ namespace HandMadeApi.Controllers
         // POST: api/CartHeaders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CartHeader>> PostCartHeader(CartHeader cartHeader)
+        public async Task<ActionResult<CartHeader>> PostCartHeader(string clientId,int productId,int quantity=1)
         {
-            _context.CartHeaders.Add(cartHeader);
-            await _context.SaveChangesAsync();
+            CartHeader cartHeader = await _context.CartHeaders.Where(e => e.ClientID == clientId).SingleOrDefaultAsync();
+            if (cartHeader == null) {
+                cartHeader = new CartHeader() { ClientID = clientId };
+                _context.CartHeaders.Add(cartHeader);
+                await _context.SaveChangesAsync();
+                cartHeader = await _context.CartHeaders.Where(e => e.ClientID == clientId).SingleOrDefaultAsync();
+            }
 
-            return CreatedAtAction("GetCartHeader", new { id = cartHeader.ID }, cartHeader);
+
+            CartDetails cartDetails = new CartDetails() { CartHeaderID = cartHeader.ID, ProductID = productId, Quantity = quantity };
+            _context.CartDetails.Add(cartDetails);
+
+
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
         // DELETE: api/CartHeaders/5
