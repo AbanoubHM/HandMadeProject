@@ -94,6 +94,18 @@ namespace HandMadeApi.Controllers
                 _context.CartHeaders.Add(cartHeader);
                 await _context.SaveChangesAsync();
                 cartHeader = await _context.CartHeaders.Where(e => e.ClientID == clientId).SingleOrDefaultAsync();
+            } else {
+                bool flag = false;
+                await _context.CartDetails.Where(c => c.CartHeaderID == cartHeader.ID).ForEachAsync(c => {
+                    if (c.ProductID == productId) {
+                        c.Quantity += quantity;
+                        flag = true;
+                    }
+                });
+                if (flag) { 
+                    await _context.SaveChangesAsync();
+                    return Ok();
+                }
             }
 
 
@@ -106,17 +118,23 @@ namespace HandMadeApi.Controllers
         }
 
         // DELETE: api/CartHeaders/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCartHeader(int id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCartHeader(string clientId,int productId)
         {
-            var cartHeader = await _context.CartHeaders.FindAsync(id);
+            var cartHeader = await _context.CartHeaders.Where(e => e.ClientID == clientId).SingleOrDefaultAsync();
             if (cartHeader == null)
             {
                 return NotFound();
             }
 
-            _context.CartHeaders.Remove(cartHeader);
-            await _context.SaveChangesAsync();
+            List<CartDetails> cartDetails = await _context.CartDetails.Where(e => e.CartHeaderID == cartHeader.ID).ToListAsync();
+            foreach (var item in cartDetails) {
+                if (item.ProductID == productId) {
+                    _context.CartDetails.Remove(item);
+                    await _context.SaveChangesAsync();
+                    return NoContent();
+                }
+            }
 
             return NoContent();
         }
