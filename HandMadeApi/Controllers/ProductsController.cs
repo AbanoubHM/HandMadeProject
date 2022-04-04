@@ -30,10 +30,10 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string sort, string search, int categoryid, string storeid, int minprice, int maxprice)
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string sort, string search, int categoryid, string storeid, int minprice, int maxprice,int pagesize=10,int pagenumber=1)
         {
             //Select only available products
-            var products = await _context.Products.Where(p => p.Quantity > 0).ToListAsync();
+            List<Product> products = await _context.Products.Where(p => p.Quantity > 0).ToListAsync();
             //sort
             products = sort switch
             {
@@ -52,6 +52,7 @@ namespace HandMadeApi.Controllers
             //filter price
             if (minprice != 0){products = products.Where(p => p.Price >= minprice).ToList();}
             if (maxprice != 0){products = products.Where(p => p.Price <= maxprice).ToList();}
+            products= products.Skip(pagesize * (pagenumber-1)).Take(pagesize).ToList();
             return products;
         }
         // GET: api/Products/1/rate
@@ -134,7 +135,7 @@ namespace HandMadeApi.Controllers
 
 
         [HttpPost("/upload")]
-        public async Task<string> uploadFile(IFormFile file) {
+        public async Task<IActionResult> uploadFile(IFormFile file) {
             try {
                 Stream stream1 = new FileStream($"{Directory.GetCurrentDirectory()}/abc",
                                                     FileMode.OpenOrCreate,
@@ -158,9 +159,10 @@ namespace HandMadeApi.Controllers
                 await blobClient.UploadAsync(stream1);
 
                 stream1.Close();
-                return blobClient.Uri.AbsoluteUri;
-            } catch (Exception ex) {
-                return ex.Message;
+                string imageUrl = blobClient.Uri.AbsoluteUri;
+                return Ok(new { imageUrl });
+            } catch  {
+                return BadRequest();
             }
         }
 
@@ -168,7 +170,7 @@ namespace HandMadeApi.Controllers
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ProductsDTO>> PostProduct(ProductsDTO product,IFormFile file)
+        public async Task<ActionResult<ProductsDTO>> PostProduct(ProductsDTO product)
         {
             
             Product productToAdd = new Product() {
@@ -182,29 +184,8 @@ namespace HandMadeApi.Controllers
                 StoreID = product.StoreID
             };
 
-            Stream stream1 = new FileStream("C:/home/Uploads/abc",
-                                                FileMode.OpenOrCreate,
-                                                FileAccess.ReadWrite,
-                                                FileShare.ReadWrite,
-                                                4096,
-                                                FileOptions.DeleteOnClose);
-            stream1.Position = 0;
-            var img = new MagickImage(file.OpenReadStream());
-            img.Resize(700, 0);
-
-            BlobClient blobClient = new BlobClient(connection,
-                "test2", "" + DateTime.Now.Ticks + Path.GetExtension(file.FileName));
-
-
-
-            img.Write(stream1);
-            stream1.Position = 0;
-
-            await blobClient.UploadAsync(stream1);
-            productToAdd.Image = blobClient.Uri.AbsoluteUri;
 
             _context.Products.Add(productToAdd);
-            stream1.Close();
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProduct", new { id = product.ID }, product);
