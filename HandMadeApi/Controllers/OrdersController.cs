@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HandMadeApi.Models.StoreDatabase;
 using Microsoft.AspNetCore.Authorization;
+using HandMadeApi.Models.DTO.Products;
 
 namespace HandMadeApi.Controllers
 {
@@ -22,26 +23,35 @@ namespace HandMadeApi.Controllers
             _context = context;
         }
 
-        // GET: api/Orders
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<OrderHeader>>> GetOrders()
-        //{
-        //    return await _context.Orders.ToListAsync();
-        //}
-
-        // GET: api/Orders/5
+        //GET: api/Orders
+       [HttpGet]
+        public async Task<ActionResult<IEnumerable<OrderHeader>>> GetOrders()
+        {
+            return await _context.OrderHeaders.ToListAsync();
+        }
+        //// GET: api/OrderHeaders/5
         //[HttpGet("{id}")]
-        //public async Task<ActionResult<OrderHeader>> GetOrder(int id)
+        //public async Task<ActionResult<IEnumerable<OrderProductDto>>> GetOrderHeader(string id)
         //{
+        //    var orderHeader = await _context.CartHeaders.Where(c => c.ClientID == id).FirstOrDefaultAsync();
 
-        //    var order = _context.Orders.Include(w => w.Products).SingleOrDefault(x => x.ID == id);
-
-        //    if (order == null)
+        //    if (orderHeader == null)
         //    {
         //        return NotFound();
         //    }
 
-        //    return order;
+        //    List<OrderDetails> orderDetails = await _context.OrderDetails.Where(c => c.OrderHeaderID == orderHeader.ID).ToListAsync();
+        //    List<OrderProductDto> products = new List<OrderProductDto>();
+        //    foreach (var item in orderDetails)
+        //    {
+        //        Product p1 = await _context.Products.FindAsync(item.ProductID);
+        //        if (p1 != null)
+        //        {
+        //            OrderProductDto pp = new OrderProductDto() { product = p1, Quantity = item.Quantity };
+        //            products.Add(pp);
+        //        }
+        //    }
+        //    return products;
         //}
 
         // PUT: api/Orders/5
