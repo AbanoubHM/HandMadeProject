@@ -203,9 +203,10 @@ namespace HandMadeApi.Controllers
             foreach (var favourite in clientfavs)
             {
                 Product product = await _context.Products.FindAsync(favourite.ProductID);
-                FavouriteDto favouriteDto = new FavouriteDto() 
-                { ProductID= product.ID, 
-                    Image = product.Image, 
+                FavouriteDto favouriteDto = new FavouriteDto()
+                {
+                    ProductID = product.ID,
+                    Image = product.Image,
                     Name = product.Name,
                     Price = (int)(product.Price - product.SaleValue),
                     Quantity = product.Quantity
@@ -214,33 +215,43 @@ namespace HandMadeApi.Controllers
             }
             return favourites;
         }
-        [HttpPost("Favourite/{id}")]
-        public async Task<ActionResult<Fav>> PostClientFavourite(string id, Fav fav)
+        [HttpPost("Favourite")]
+        public async Task<ActionResult<Fav>> PostClientFavourite(string clientid, int productid)
         {
-            fav.UserID = id;
-            _context.Favs.Add(fav);
-            try
+            Fav fav = await _context.Favs.Where(f => (f.UserID == clientid && f.ProductID == productid)).FirstOrDefaultAsync();
+            if (fav == null)
             {
-            
-                
-                
+                fav = new Fav() { UserID = clientid, ProductID = productid };
+                _context.Favs.Add(fav);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
-            {
-                //if (FavExists(fav.ID))
-                //{
-                //    return Conflict();
-                //}
-                //else
-                //{
-                //    throw;
-                //}
-            }
-
-            return CreatedAtAction("GetClientFavourites", new { id = fav.ID }, fav);
+            return Ok();
         }
 
-
+        [HttpDelete("Favourite")]
+        public async Task<IActionResult> DeleteFavourite(string clientId, int productId, bool deleteall = false)
+        {
+            List<Fav> favs = await _context.Favs.Where(f=> f.UserID == clientId).ToListAsync();
+            if (deleteall)
+            {
+                foreach (var item in favs)
+                {
+                    _context.Favs.Remove(item);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            else if(productId != 0)
+            {
+                foreach (var item in favs)
+                {
+                    if (item.ProductID == productId)
+                    {
+                        _context.Favs.Remove(item);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+            }
+            return NoContent();
+        }
     }
 }
