@@ -9,6 +9,10 @@
     "mssql1": {
       "type": "mssql",
       "connectionId": "connectionString"
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "MyStorageString"
     }
   }
 }
