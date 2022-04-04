@@ -10,6 +10,8 @@ using HandMadeApi.Models.StoreDatabase;
 using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
 using HandMadeApi.Models.DTO.Products;
+using ImageMagick;
+using Azure.Storage.Blobs;
 
 namespace HandMadeApi.Controllers
 {
@@ -18,6 +20,8 @@ namespace HandMadeApi.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly StoreContext _context;
+        private readonly string connection = "DefaultEndpointsProtocol=https;AccountName=handmadestoragedb;AccountKey=VB2TdG+PH9hEHmaKwXQNcTt43j2Bz2kG9xlClkMGVcxezNnG+PRJ2jX7Jq01Z/YGBOxmD/Rz+EG9osGTrkmjEg==;BlobEndpoint=https://handmadestoragedb.blob.core.windows.net/;TableEndpoint=https://handmadestoragedb.table.core.windows.net/;QueueEndpoint=https://handmadestoragedb.queue.core.windows.net/;FileEndpoint=https://handmadestoragedb.file.core.windows.net/";
+
 
         public ProductsController(StoreContext context)
         {
@@ -128,13 +132,46 @@ namespace HandMadeApi.Controllers
             return NoContent();
         }
 
+
+        [HttpPost("/upload")]
+        public async Task<string> uploadFile(IFormFile file) {
+            try {
+                Stream stream1 = new FileStream($"{Directory.GetCurrentDirectory()}/abc",
+                                                    FileMode.OpenOrCreate,
+                                                    FileAccess.ReadWrite,
+                                                    FileShare.ReadWrite,
+                                                    4096,
+                                                    FileOptions.DeleteOnClose);
+
+                stream1.Position = 0;
+                var img = new MagickImage(file.OpenReadStream());
+                img.Resize(700, 0);
+
+                BlobClient blobClient = new BlobClient(connection,
+                    "test2", "" + DateTime.Now.Ticks + Path.GetExtension(file.FileName));
+
+
+
+                img.Write(stream1);
+                stream1.Position = 0;
+
+                await blobClient.UploadAsync(stream1);
+
+                stream1.Close();
+                return blobClient.Uri.AbsoluteUri;
+            } catch (Exception ex) {
+                return ex.Message;
+            }
+        }
+
+
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ProductsDTO>> PostProduct(ProductsDTO product)
+        public async Task<ActionResult<ProductsDTO>> PostProduct(ProductsDTO product,IFormFile file)
         {
-            var productToAdd = new Product
-            {
+            
+            Product productToAdd = new Product() {
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
@@ -142,10 +179,32 @@ namespace HandMadeApi.Controllers
                 Quantity = product.Quantity,
                 PreparationDays = product.PreparationDays,
                 CategoryID = product.CategoryID,
-                Image = product.Image,
                 StoreID = product.StoreID
-    };
+            };
+
+            Stream stream1 = new FileStream("C:/home/Uploads/abc",
+                                                FileMode.OpenOrCreate,
+                                                FileAccess.ReadWrite,
+                                                FileShare.ReadWrite,
+                                                4096,
+                                                FileOptions.DeleteOnClose);
+            stream1.Position = 0;
+            var img = new MagickImage(file.OpenReadStream());
+            img.Resize(700, 0);
+
+            BlobClient blobClient = new BlobClient(connection,
+                "test2", "" + DateTime.Now.Ticks + Path.GetExtension(file.FileName));
+
+
+
+            img.Write(stream1);
+            stream1.Position = 0;
+
+            await blobClient.UploadAsync(stream1);
+            productToAdd.Image = blobClient.Uri.AbsoluteUri;
+
             _context.Products.Add(productToAdd);
+            stream1.Close();
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProduct", new { id = product.ID }, product);

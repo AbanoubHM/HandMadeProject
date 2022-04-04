@@ -8,6 +8,12 @@
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/handmadeapidbserver/databases/HandMadeApi_db",
       "type": "mssql.azure",
       "connectionId": "ConnectionString"
+    },
+    "storage1": {
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/handmadestoragedb",
+      "type": "storage.azure",
+      "connectionId": "MyStorageString"
     }
   }
 }

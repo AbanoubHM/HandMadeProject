@@ -54,30 +54,29 @@ namespace HandMadeApi.Controllers
 
         // PUT: api/CartHeaders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCartHeader(int id, CartHeader cartHeader)
-        {
-            if (id != cartHeader.ID)
-            {
-                return BadRequest();
+        [HttpPut]
+        public async Task<IActionResult> PutCartHeader(string clientId, int productId, int quantity = 1) {
+            var cartHeader = await _context.CartHeaders.Where(c => c.ClientID == clientId).SingleOrDefaultAsync();
+
+            if (cartHeader == null) {
+                return NotFound();
             }
+            
+            await _context.CartDetails.Where(c => c.CartHeaderID == cartHeader.ID).ForEachAsync(c => {
+                if (c.ProductID == productId) {
+                    c.Quantity = quantity;
+                    
+                }
+            });
+            //_context.Entry(cartHeader).State = EntityState.Modified;
 
-            _context.Entry(cartHeader).State = EntityState.Modified;
-
-            try
-            {
+            try {
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CartHeaderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+            } catch (DbUpdateConcurrencyException) {
+
+
+                throw;
+
             }
 
             return NoContent();
