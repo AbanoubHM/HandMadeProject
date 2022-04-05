@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using HandMadeApi.Models.DTO.Products;
 using ImageMagick;
 using Azure.Storage.Blobs;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace HandMadeApi.Controllers
 {
@@ -30,8 +31,9 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string sort, string search, int categoryid, string storeid, int minprice, int maxprice,int pagesize=10,int pagenumber=1)
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string sort, string search, int categoryid, string storeid, int minprice, int maxprice,int pagesize=12,int pagenumber=1)
         {
+          
             //Select only available products
             List<Product> products = await _context.Products.Where(p => p.Quantity > 0).ToListAsync();
             //sort
@@ -89,8 +91,10 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
+
             var product = await _context.Products.FindAsync(id);
             product.CategoryName = _context.Categories.Where(e => e.ID == product.CategoryID).Select(x => x.Name).FirstOrDefault();
             if (product == null)
@@ -161,8 +165,8 @@ namespace HandMadeApi.Controllers
                 stream1.Close();
                 string imageUrl = blobClient.Uri.AbsoluteUri;
                 return Ok(new { imageUrl });
-            } catch  {
-                return BadRequest();
+            } catch (Exception e)  {
+                return BadRequest(new {e.Message});
             }
         }
 
@@ -178,6 +182,9 @@ namespace HandMadeApi.Controllers
                 Description = product.Description,
                 Price = product.Price,
                 SaleValue = product.SaleValue,
+                CategoryName = _context.Categories.Where(e => e.ID == product.CategoryID).Select(x => x.Name).FirstOrDefault(),
+
+                Image = product.Image,
                 Quantity = product.Quantity,
                 PreparationDays = product.PreparationDays,
                 CategoryID = product.CategoryID,
@@ -197,16 +204,29 @@ namespace HandMadeApi.Controllers
         public async Task<IActionResult> DeleteProduct(int id)
         {
 
+            
+         
+
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
             }
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(Request.Headers.Authorization.ToString().Split(' ')[1]);
+            var tokenS = jsonToken as JwtSecurityToken;
+            var subId = tokenS.Claims.Where(e => e.Type == "sub").FirstOrDefault();
+            var role = tokenS.Claims.Where(e => e.Type == "http://roletest.net/roles" && e.Value == "Admin").FirstOrDefault();
+            if (role?.Value == "Admin" || subId.Value == product.StoreID) {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+                return Ok();
+            }
+            return Unauthorized();
 
-            return NoContent();
+
+            
         }
 
         private bool ProductExists(int id)

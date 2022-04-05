@@ -52,7 +52,7 @@ namespace HandMadeApi.Controllers
             {
                 return NotFound();
             }
-            var products = await _context.Products.Where(p => p.StoreID == id).ToListAsync();
+            var products = await _context.Products.Where(p => p.StoreID == id).Include(e=>e.Category).ToListAsync();
 
 
             return products;
