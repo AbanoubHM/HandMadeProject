@@ -91,7 +91,6 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
 

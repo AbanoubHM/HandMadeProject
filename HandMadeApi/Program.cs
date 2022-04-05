@@ -29,7 +29,7 @@ builder.Services.AddCors(options => {
     options.AddPolicy("AllowSpecificOrigin",
         builder => {
             builder
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins("http://localhost:4200", "https://handmadestore.azurewebsites.net/")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
