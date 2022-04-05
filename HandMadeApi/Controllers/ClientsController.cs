@@ -216,12 +216,12 @@ namespace HandMadeApi.Controllers
             return favourites;
         }
         [HttpPost("Favourite")]
-        public async Task<ActionResult<Fav>> PostClientFavourite(string clientid, int productid)
+        public async Task<ActionResult<Fav>> PostClientFavourite([FromBody] Fav myfav)
         {
-            Fav fav = await _context.Favs.Where(f => (f.UserID == clientid && f.ProductID == productid)).FirstOrDefaultAsync();
+            Fav fav = await _context.Favs.Where(f => (f.UserID == myfav.UserID && f.ProductID == myfav.ProductID)).FirstOrDefaultAsync();
             if (fav == null)
             {
-                fav = new Fav() { UserID = clientid, ProductID = productid };
+                fav = new Fav() { UserID = myfav.UserID, ProductID = myfav.ProductID };
                 _context.Favs.Add(fav);
                 await _context.SaveChangesAsync();
             }
@@ -229,26 +229,16 @@ namespace HandMadeApi.Controllers
         }
 
         [HttpDelete("Favourite")]
-        public async Task<IActionResult> DeleteFavourite(string clientId, int productId, bool deleteall = false)
+        public async Task<IActionResult> DeleteFavourite([FromBody] Fav fav)
         {
-            List<Fav> favs = await _context.Favs.Where(f=> f.UserID == clientId).ToListAsync();
-            if (deleteall)
+            List<Fav> favs = await _context.Favs.Where(f => f.UserID == fav.UserID).ToListAsync();
+            if (favs != null)
             {
-                foreach (var item in favs)
+                var item = favs.Where(f => f.ProductID == fav.ProductID).FirstOrDefault();
+                if (item != null)
                 {
                     _context.Favs.Remove(item);
                     await _context.SaveChangesAsync();
-                }
-            }
-            else if(productId != 0)
-            {
-                foreach (var item in favs)
-                {
-                    if (item.ProductID == productId)
-                    {
-                        _context.Favs.Remove(item);
-                        await _context.SaveChangesAsync();
-                    }
                 }
             }
             return NoContent();
