@@ -100,6 +100,7 @@ namespace HandMadeApi.Controllers
                     Quantity = e.Quantity
                 }
               );
+                _context.Products.Where(x => x.ID == e.ProductID).SingleOrDefault().Quantity-=e.Quantity;
                 _context.CartDetails.Remove(e);
             });
 
@@ -116,7 +117,11 @@ namespace HandMadeApi.Controllers
                 return NotFound();
             }
 
-            await _context.OrderDetails.Where(e => e.OrderHeaderID == order.ID).ForEachAsync(e => {_context.OrderDetails.Remove(e); });
+            await _context.OrderDetails.Where(e => e.OrderHeaderID == order.ID).ForEachAsync(e => {
+                var p = _context.Products.Where(x => x.ID == e.ProductID).SingleOrDefault();
+                p.Quantity += e.Quantity;
+                _context.Products.Update(p);
+                _context.OrderDetails.Remove(e); });
 
             _context.OrderHeaders.Remove(order);
             await _context.SaveChangesAsync();
