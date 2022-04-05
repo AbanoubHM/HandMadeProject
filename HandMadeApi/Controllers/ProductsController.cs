@@ -94,7 +94,7 @@ namespace HandMadeApi.Controllers
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
 
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products.Include(e=>e.Store).SingleOrDefaultAsync(x=>x.ID== id);
             product.CategoryName = _context.Categories.Where(e => e.ID == product.CategoryID).Select(x => x.Name).FirstOrDefault();
             if (product == null)
             {

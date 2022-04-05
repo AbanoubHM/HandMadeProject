@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HandMadeApi.Models.StoreDatabase;
 using HandMadeApi.Models.DTO.Products;
+using HandMadeApi.Models.DTO.Cart;
 
 namespace HandMadeApi.Controllers
 {
@@ -55,16 +56,16 @@ namespace HandMadeApi.Controllers
         // PUT: api/CartHeaders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
-        public async Task<IActionResult> PutCartHeader(string clientId, int productId, int quantity = 1) {
-            var cartHeader = await _context.CartHeaders.Where(c => c.ClientID == clientId).SingleOrDefaultAsync();
+        public async Task<IActionResult> PutCartHeader(CartRequestDto cart) {
+            var cartHeader = await _context.CartHeaders.Where(e => e.ClientID == cart.ClientId).SingleOrDefaultAsync();
 
             if (cartHeader == null) {
                 return NotFound();
             }
             
-            await _context.CartDetails.Where(c => c.CartHeaderID == cartHeader.ID).ForEachAsync(c => {
-                if (c.ProductID == productId) {
-                    c.Quantity = quantity;
+            await _context.CartDetails.Where(e => e.CartHeaderID == cartHeader.ID).ForEachAsync(w => {
+                if (w.ProductID == cart.ProductId) {
+                    w.Quantity = cart.Quantity;
                     
                 }
             });
@@ -85,19 +86,19 @@ namespace HandMadeApi.Controllers
         // POST: api/CartHeaders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CartHeader>> PostCartHeader(string clientId,int productId,int quantity=1)
+        public async Task<ActionResult<CartHeader>> PostCartHeader(CartRequestDto cart)
         {
-            CartHeader cartHeader = await _context.CartHeaders.Where(e => e.ClientID == clientId).SingleOrDefaultAsync();
+            CartHeader cartHeader = await _context.CartHeaders.Where(e => e.ClientID == cart.ClientId).SingleOrDefaultAsync();
             if (cartHeader == null) {
-                cartHeader = new CartHeader() { ClientID = clientId };
+                cartHeader = new CartHeader() { ClientID = cart.ClientId };
                 _context.CartHeaders.Add(cartHeader);
                 await _context.SaveChangesAsync();
-                cartHeader = await _context.CartHeaders.Where(e => e.ClientID == clientId).SingleOrDefaultAsync();
+                cartHeader = await _context.CartHeaders.Where(e => e.ClientID == cart.ClientId).SingleOrDefaultAsync();
             } else {
                 bool flag = false;
                 await _context.CartDetails.Where(c => c.CartHeaderID == cartHeader.ID).ForEachAsync(c => {
-                    if (c.ProductID == productId) {
-                        c.Quantity += quantity;
+                    if (c.ProductID == cart.ProductId) {
+                        c.Quantity += cart.Quantity;
                         flag = true;
                     }
                 });
@@ -108,7 +109,7 @@ namespace HandMadeApi.Controllers
             }
 
 
-            CartDetails cartDetails = new CartDetails() { CartHeaderID = cartHeader.ID, ProductID = productId, Quantity = quantity };
+            CartDetails cartDetails = new CartDetails() { CartHeaderID = cartHeader.ID, ProductID = cart.ProductId, Quantity = cart.Quantity };
             _context.CartDetails.Add(cartDetails);
 
 
@@ -118,9 +119,9 @@ namespace HandMadeApi.Controllers
 
         // DELETE: api/CartHeaders/5
         [HttpDelete]
-        public async Task<IActionResult> DeleteCartHeader(string clientId,int productId)
+        public async Task<IActionResult> DeleteCartHeader(CartRequestDto cart)
         {
-            var cartHeader = await _context.CartHeaders.Where(e => e.ClientID == clientId).SingleOrDefaultAsync();
+            var cartHeader = await _context.CartHeaders.Where(e => e.ClientID == cart.ClientId).SingleOrDefaultAsync();
             if (cartHeader == null)
             {
                 return NotFound();
@@ -128,7 +129,7 @@ namespace HandMadeApi.Controllers
 
             List<CartDetails> cartDetails = await _context.CartDetails.Where(e => e.CartHeaderID == cartHeader.ID).ToListAsync();
             foreach (var item in cartDetails) {
-                if (item.ProductID == productId) {
+                if (item.ProductID == cart.ProductId) {
                     _context.CartDetails.Remove(item);
                     await _context.SaveChangesAsync();
                     return NoContent();
