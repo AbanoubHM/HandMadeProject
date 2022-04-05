@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using HandMadeApi.Models.StoreDatabase;
 using Microsoft.AspNetCore.Authorization;
 using HandMadeApi.Models.DTO.Products;
-using HandMadeApi.Models.DTO.NewFolder;
+using HandMadeApi.Models.DTO.Order;
+using AutoMapper;
 
 namespace HandMadeApi.Controllers
 {
@@ -18,10 +19,12 @@ namespace HandMadeApi.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly StoreContext _context;
+        private readonly IMapper _mapper;
 
-        public OrdersController(StoreContext context)
+        public OrdersController(StoreContext context,IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         //GET: api/Orders
@@ -31,67 +34,94 @@ namespace HandMadeApi.Controllers
             return await _context.OrderHeaders.ToListAsync();
         }
         // GET: api/OrderHeaders/5
+        /// <summary>
+        /// Get all orders made by this client
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns>List of orders</returns>
         [HttpGet("{userid}")]
-        public async Task<ActionResult<IEnumerable<OrderProductDto>>> GetOrderHeader(string userid)
+        public async Task<ActionResult<IEnumerable<OrderHeader>>> GetOrderHeader(string userid)
         {
-            var orderHeader = await _context.CartHeaders.Where(c => c.ClientID == userid).FirstOrDefaultAsync();
+            var orderHeaders = await _context.OrderHeaders.Where(c => c.ClientID == userid).ToListAsync();
 
-            if (orderHeader == null)
+            if (orderHeaders == null)
             {
                 return NotFound();
             }
 
-            List<OrderDetails> orderDetails = await _context.OrderDetails.Where(c => c.OrderHeaderID == orderHeader.ID).ToListAsync();
-            List<OrderProductDto> products = new List<OrderProductDto>();
-            foreach (var item in orderDetails)
+            
+            return orderHeaders;
+        }
+
+        /// <summary>
+        /// Gets specific order Details and products
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns>order Details and products</returns>
+        [HttpGet("details/{orderId}")]
+        public async Task<ActionResult<IEnumerable<OrderDetails>>> GetOrderDetails(int orderId)
+        {
+            var orderDetails = await _context.OrderDetails.Include(c => c.Product).Where(e=>e.OrderHeaderID==orderId).ToListAsync();
+
+            if (orderDetails == null)
             {
-                Product p1 = await _context.Products.FindAsync(item.ProductID);
-                if (p1 != null)
-                {
-                    OrderProductDto pp = new OrderProductDto() { product = p1, Quantity = item.Quantity };
-                    products.Add(pp);
-                }
+                return NotFound();
             }
-            return products;
+
+            
+            return orderDetails;
         }
 
         //POST: api/Orders
         [HttpPost]
-        public async Task<ActionResult<OrderHeader>> PostOrder(PostOrderDto order)
-        {
-            OrderHeader orderHeader = await _context.OrderHeaders.Where(e => e.ClientID == order.UserID).SingleOrDefaultAsync();
-            if (orderHeader == null)
-            {
-                orderHeader = new OrderHeader() { ClientID = order.UserID, OrderDateTime = DateTime.Now, City = order.City, State = order.State, Street = order.Street, Paid = false,};
-                _context.OrderHeaders.Add(orderHeader);
-                await _context.SaveChangesAsync();
-                
-                //cartHeader = await _context.CartHeaders.Where(e => e.ClientID == clientId).SingleOrDefaultAsync();
-            }
-            else
-            {
-                //bool flag = false;
-                //await _context.CartDetails.Where(c => c.CartHeaderID == cartHeader.ID).ForEachAsync(c => {
-                //    if (c.ProductID == productId)
-                //    {
-                //        c.Quantity += quantity;
-                //        flag = true;
-                //    }
-                //});
-                //if (flag)
-                //{
-                //    await _context.SaveChangesAsync();
-                //    return Ok();
-                //}
-            }
+        public async Task<ActionResult<OrderHeader>> PostOrder(PostOrderDto order) {
+            var cartHeader = await _context.CartHeaders.Where(e => e.ClientID == order.ClientID).SingleOrDefaultAsync();
 
 
-            //CartDetails cartDetails = new CartDetails() { CartHeaderID = cartHeader.ID, ProductID = productId, Quantity = quantity };
-            //_context.CartDetails.Add(cartDetails);
+            if (cartHeader == null) { return NotFound(); }
+
+            var orderHeader = 
+                new OrderHeader() {
+                ClientID = order.ClientID,
+                Phone = order.Phone,
+                Note = order.Note,
+                OrderDateTime = DateTime.Now,
+                City = order.City,
+                State = order.State,
+                Street = order.Street,
+                Paid = false,
+            };
+            _context.OrderHeaders.Add(orderHeader);
+            await _context.SaveChangesAsync();
+            await _context.CartDetails.Include(c => c.Product).Where(e => e.CartHeaderID == cartHeader.ID).ForEachAsync(e => {
+                _context.OrderDetails.Add(new OrderDetails() {
+                    OrderHeaderID = orderHeader.ID,
+                    ProductID = e.ProductID,
+                    Quantity = e.Quantity
+                }
+              );
+                _context.CartDetails.Remove(e);
+            });
+
+
 
 
             await _context.SaveChangesAsync();
             return Ok();
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteOrder(int id) {
+            var order = await _context.OrderHeaders.FindAsync(id);
+            if (order == null) {
+                return NotFound();
+            }
+
+            await _context.OrderDetails.Where(e => e.OrderHeaderID == order.ID).ForEachAsync(e => {_context.OrderDetails.Remove(e); });
+
+            _context.OrderHeaders.Remove(order);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

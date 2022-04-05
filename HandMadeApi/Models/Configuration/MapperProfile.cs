@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HandMadeApi.Models.DTO.Cart;
 using HandMadeApi.Models.DTO.Category;
+using HandMadeApi.Models.DTO.Order;
 using HandMadeApi.Models.DTO.Products;
 using HandMadeApi.Models.StoreDatabase;
 
@@ -14,6 +15,7 @@ namespace HandMadeApi.Models.Configuration {
                 .ForMember(dest => dest.ProductDescription, opt => opt.MapFrom(src => src.Description));
             CreateMap<CartDetails, CartDetailsDto>();
             CreateMap<CartHeader, CartHeaderDto>();
+            CreateMap<OrderHeader, PostOrderDto>().ForMember(dest => dest.ClientID, opt => opt.MapFrom(src => src.ClientID));
 
         }
     }

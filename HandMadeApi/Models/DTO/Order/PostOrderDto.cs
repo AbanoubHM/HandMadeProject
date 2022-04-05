@@ -1,8 +1,8 @@
-﻿namespace HandMadeApi.Models.DTO.NewFolder
+﻿namespace HandMadeApi.Models.DTO.Order
 {
     public class PostOrderDto
     {
-        public string UserID { get; set; }
+        public string ClientID { get; set; }
         public string? Phone { get; set; }
         public string? Street { get; set; }
         public string? City { get; set; }
