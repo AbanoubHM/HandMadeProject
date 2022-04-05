@@ -138,6 +138,7 @@ namespace HandMadeApi.Controllers
 
 
         [HttpPost("/upload")]
+        [Authorize("post:product")]
         public async Task<IActionResult> uploadFile(IFormFile file) {
             try {
                 Stream stream1 = new FileStream($"{Directory.GetCurrentDirectory()}/abc",
