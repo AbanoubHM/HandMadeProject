@@ -40,6 +40,7 @@ namespace HandMadeApi.Controllers
         /// <param name="userid"></param>
         /// <returns>List of orders</returns>
         [HttpGet("{userid}")]
+        [Authorize("read:orders")]
         public async Task<ActionResult<IEnumerable<OrderHeader>>> GetOrderHeader(string userid)
         {
             var orderHeaders = await _context.OrderHeaders.Where(c => c.ClientID == userid).ToListAsync();
@@ -59,6 +60,7 @@ namespace HandMadeApi.Controllers
         /// <param name="orderId"></param>
         /// <returns>order Details and products</returns>
         [HttpGet("details/{orderId}")]
+        [Authorize("read:orders")]
         public async Task<ActionResult<IEnumerable<OrderDetails>>> GetOrderDetails(int orderId)
         {
             var orderDetails = await _context.OrderDetails.Include(c => c.Product).Where(e=>e.OrderHeaderID==orderId).ToListAsync();
@@ -72,8 +74,23 @@ namespace HandMadeApi.Controllers
             return orderDetails;
         }
 
+
+        [HttpGet("store/{storeId}")]
+        [Authorize("post:product")]
+        public async Task<ActionResult<IEnumerable<OrderDetails>>> GetStoreOrders(string storeId) {
+            var orderDetails = await _context.OrderDetails.Include(c => c.Product).Where(e => e.Product.StoreID == storeId).ToListAsync();
+
+            if (orderDetails == null) {
+                return NotFound();
+            }
+
+
+            return orderDetails;
+        }
+
         //POST: api/Orders
         [HttpPost]
+        [Authorize("post:orders")]
         public async Task<ActionResult<OrderHeader>> PostOrder(PostOrderDto order) {
             var cartHeader = await _context.CartHeaders.Where(e => e.ClientID == order.ClientID).SingleOrDefaultAsync();
 
@@ -111,6 +128,7 @@ namespace HandMadeApi.Controllers
             return Ok();
         }
         [HttpDelete]
+        [Authorize("delete:orders")]
         public async Task<IActionResult> DeleteOrder(int id) {
             var order = await _context.OrderHeaders.FindAsync(id);
             if (order == null) {

@@ -37,6 +37,7 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Clients/5
         [HttpGet("{id}")]
+        [Authorize("read:clients")]
         public async Task<ActionResult<Client>> GetClient(string id)
         {
             var client = await _context.Clients.FindAsync(id);
@@ -52,6 +53,7 @@ namespace HandMadeApi.Controllers
         // PUT: api/Clients/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize("read:clients")]
         public async Task<IActionResult> PutClient(string id, Client client)
         {
             if (id != client.ID)

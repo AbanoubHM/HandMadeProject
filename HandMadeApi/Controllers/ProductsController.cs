@@ -91,6 +91,7 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
+        [Authorize("read:product")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
 
@@ -138,7 +139,7 @@ namespace HandMadeApi.Controllers
 
 
         [HttpPost("/upload")]
-        [Authorize("post:product")]
+        [Authorize("post:store")]
         public async Task<IActionResult> uploadFile(IFormFile file) {
             try {
                 Stream stream1 = new FileStream($"{Directory.GetCurrentDirectory()}/abc",
