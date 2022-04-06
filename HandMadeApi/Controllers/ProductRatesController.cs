@@ -24,13 +24,15 @@ namespace HandMadeApi.Controllers
 
         // GET: api/ProductRates
         [HttpGet]
+        [Authorize("read:rate")]
         public async Task<ActionResult<IEnumerable<ProductRate>>> GetProductRates()
         {
             return await _context.ProductRates.ToListAsync();
         }
         // PUT: api/ProductRates/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPut("{id}")]
+        [Authorize("update:rate")]
         public async Task<IActionResult> PutProductRate(int id, ProductRate productRate)
         {
             if (id != productRate.ID)
@@ -62,6 +64,7 @@ namespace HandMadeApi.Controllers
         // POST: api/ProductRates
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize("post:rate")]
         public async Task<ActionResult<ProductRate>> PostProductRate(ProductRate productRate)
         {
             _context.ProductRates.Add(productRate);

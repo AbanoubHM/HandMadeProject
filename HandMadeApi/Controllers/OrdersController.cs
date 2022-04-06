@@ -29,6 +29,7 @@ namespace HandMadeApi.Controllers
 
         //GET: api/Orders
        [HttpGet]
+       [Authorize("read:orders")]
         public async Task<ActionResult<IEnumerable<OrderHeader>>> GetOrders()
         {
             return await _context.OrderHeaders.ToListAsync();
@@ -76,15 +77,13 @@ namespace HandMadeApi.Controllers
 
 
         [HttpGet("store/{storeId}")]
-        [Authorize("post:product")]
+        [Authorize("read:orders")]
         public async Task<ActionResult<IEnumerable<OrderDetails>>> GetStoreOrders(string storeId) {
             var orderDetails = await _context.OrderDetails.Include(c => c.Product).Where(e => e.Product.StoreID == storeId).ToListAsync();
 
             if (orderDetails == null) {
                 return NotFound();
             }
-
-
             return orderDetails;
         }
 
@@ -120,10 +119,6 @@ namespace HandMadeApi.Controllers
                 _context.Products.Where(x => x.ID == e.ProductID).SingleOrDefault().Quantity-=e.Quantity;
                 _context.CartDetails.Remove(e);
             });
-
-
-
-
             await _context.SaveChangesAsync();
             return Ok();
         }

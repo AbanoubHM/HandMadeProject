@@ -29,11 +29,13 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Categories
         [HttpGet]
+        [Authorize("read:category")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
             return await _context.Categories.ToListAsync();
         }
         [HttpGet("{id}/products")]
+        [Authorize("read:category")]
         public async Task<ActionResult<IEnumerable<DTOCategoryProducts>>> GetProducts(int id) {
             var category = await _context.Categories.FindAsync(id);
             if (category == null) {
@@ -43,19 +45,11 @@ namespace HandMadeApi.Controllers
             List<Product> prods = _context.Products.Where(e => e.CategoryID == category.ID).ToList();
             List<DTOCategoryProducts> test= _mapper.Map<List<DTOCategoryProducts>>(prods);
             return test;
-            //    _context.Products.Where(e=>e.CategoryID==category.ID).Select(x=>new DTOCategoryProducts() {
-            //    ProductID = x.ID,
-            //    ProductName=x.Name,
-            //    CategoryName = category.Name,
-            //    ProductDescription = x.Description,
-            //    ProductImage = x.Image,
-            //    Price = x.Price,
-            //    SaleValue = x.SaleValue
-            //}).ToList();
         }
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
+        [Authorize("read:category")]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
             var category = await _context.Categories.FindAsync(id);
@@ -72,6 +66,7 @@ namespace HandMadeApi.Controllers
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize("update:category")]
         public async Task<IActionResult> PutCategory(int id, Category category)
         {
             if (id != category.ID)
@@ -103,6 +98,7 @@ namespace HandMadeApi.Controllers
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize("post:category")]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
             _context.Categories.Add(category);

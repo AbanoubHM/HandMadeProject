@@ -24,6 +24,7 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Stores
         [HttpGet]
+        [Authorize("read:store")]
         public async Task<ActionResult<IEnumerable<Store>>> GetStores()
         {
             return await _context.Stores.ToListAsync();
@@ -31,6 +32,7 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Stores/5
         [HttpGet("{id}")]
+        [Authorize("read:store")]
         public async Task<ActionResult<Store>> GetStore(string id)
         {
             var store = await _context.Stores.FindAsync(id);
@@ -44,6 +46,7 @@ namespace HandMadeApi.Controllers
         }
         
         [HttpGet("{id}/products")]
+        [Authorize("read:store")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string id)
         {
             var store = await _context.Stores.FindAsync(id);
@@ -61,6 +64,7 @@ namespace HandMadeApi.Controllers
         // PUT: api/Stores/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize("update:store")]
         public async Task<IActionResult> PutStore(string id, Store store)
         {
             if (id != store.ID)
@@ -92,6 +96,7 @@ namespace HandMadeApi.Controllers
         // POST: api/Stores
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize("post:store")]
         public async Task<ActionResult<Store>> PostStore(Store store)
         {
             _context.Stores.Add(store);

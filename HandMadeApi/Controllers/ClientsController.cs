@@ -30,6 +30,7 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Clients
         [HttpGet]
+        [Authorize("read:clients")]
         public async Task<ActionResult<IEnumerable<Client>>> GetClients()
         {
             return await _context.Clients.ToListAsync();
@@ -83,8 +84,8 @@ namespace HandMadeApi.Controllers
         }
 
         // POST: api/Clients
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize("post:client")]
         public async Task<ActionResult<Client>> PostClient(Client client)
         {
             _context.Clients.Add(client);
@@ -169,6 +170,7 @@ namespace HandMadeApi.Controllers
         }
 
         [HttpGet("{id}/role")]
+        [Authorize]
         public async Task<ActionResult<string>> GetRole(string id)
         {
             var url = $"https://dev-vxrkxu-x.us.auth0.com/api/v2/users/{id}/roles";
@@ -193,6 +195,7 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Clients/fav/5
         [HttpGet("Favourite/{id}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<FavouriteDto>>> GetClientFavourites(string id)
         {
             var clientfavs = await _context.Favs.Where(x => x.UserID == id).ToListAsync();
@@ -218,6 +221,7 @@ namespace HandMadeApi.Controllers
             return favourites;
         }
         [HttpPost("Favourite")]
+        [Authorize]
         public async Task<ActionResult<Fav>> PostClientFavourite([FromBody] Fav myfav)
         {
             Fav fav = await _context.Favs.Where(f => (f.UserID == myfav.UserID && f.ProductID == myfav.ProductID)).FirstOrDefaultAsync();
@@ -231,6 +235,7 @@ namespace HandMadeApi.Controllers
         }
 
         [HttpDelete("Favourite")]
+        [Authorize]
         public async Task<IActionResult> DeleteFavourite([FromBody] Fav fav)
         {
             List<Fav> favs = await _context.Favs.Where(f => f.UserID == fav.UserID).ToListAsync();

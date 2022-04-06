@@ -31,6 +31,7 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Products
         [HttpGet]
+        [Authorize("read:products")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string sort, string search, int categoryid, string storeid, int minprice, int maxprice,int pagesize=12,int pagenumber=1)
         {
           
@@ -59,6 +60,7 @@ namespace HandMadeApi.Controllers
         }
         // GET: api/Products/1/rate
         [HttpGet("{id}/Reviews")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ProductRate>>> GetProductRate(int id)
         {
             var productRates = await _context.ProductRates.Where(p => p.ProductID == id).ToListAsync();
@@ -76,6 +78,7 @@ namespace HandMadeApi.Controllers
         }
         //Get: api/Products/1/avgrate
         [HttpGet("{id}/AvgRate")]
+        [Authorize]
         public async Task<ActionResult<int>> GetAvgRate(int id)
         {
             var productRates = await _context.ProductRates.Where(p => p.ProductID == id).ToListAsync();
@@ -106,7 +109,6 @@ namespace HandMadeApi.Controllers
         }
 
         // PUT: api/Products/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize("update:product")]
         public async Task<IActionResult> PutProduct(int id, Product product)
@@ -133,13 +135,11 @@ namespace HandMadeApi.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 
-
         [HttpPost("/upload")]
-        [Authorize("post:store")]
+        [Authorize]
         public async Task<IActionResult> uploadFile(IFormFile file) {
             try {
                 Stream stream1 = new FileStream($"{Directory.GetCurrentDirectory()}/abc",
@@ -171,10 +171,9 @@ namespace HandMadeApi.Controllers
             }
         }
 
-
         // POST: api/Products
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize("post:products")]
         public async Task<ActionResult<ProductsDTO>> PostProduct(ProductsDTO product)
         {
             
@@ -191,8 +190,6 @@ namespace HandMadeApi.Controllers
                 CategoryID = product.CategoryID,
                 StoreID = product.StoreID
             };
-
-
             _context.Products.Add(productToAdd);
             await _context.SaveChangesAsync();
 
@@ -204,10 +201,6 @@ namespace HandMadeApi.Controllers
         [Authorize("delete:product")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-
-            
-         
-
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
@@ -225,9 +218,6 @@ namespace HandMadeApi.Controllers
                 return Ok();
             }
             return Unauthorized();
-
-
-            
         }
 
         private bool ProductExists(int id)
@@ -235,22 +225,5 @@ namespace HandMadeApi.Controllers
             return _context.Products.Any(e => e.ID == id);
         }
 
-        //Resize Image
-        //private string ResizeImage(IFormFile file)
-        //{
-        //    if (file == null)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    var image = Image.FromStream(file.OpenReadStream());
-
-        //    var resizedImage = new Bitmap(image, new Size(256, 256));
-        //    var stream = new System.IO.MemoryStream();
-        //    resizedImage.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
-        //    stream.Position = 0;
-
-        //    return File(stream, "image/jpeg");
-        //}
     }
 }

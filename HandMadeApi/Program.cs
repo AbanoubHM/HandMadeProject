@@ -46,26 +46,31 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization(options => {
-    options.AddPolicy("read:products", policy => policy.Requirements.Add(new HasScopeRequirement("read:products", domain)));
-    options.AddPolicy("post:products", policy => policy.Requirements.Add(new HasScopeRequirement("post:products", domain)));
-    options.AddPolicy("read:category", policy => policy.Requirements.Add(new HasScopeRequirement("read:category", domain)));
-    options.AddPolicy("post:category", policy => policy.Requirements.Add(new HasScopeRequirement("post:category", domain)));
-    options.AddPolicy("update:product", policy => policy.Requirements.Add(new HasScopeRequirement("update:product", domain)));
-    options.AddPolicy("delete:product", policy => policy.Requirements.Add(new HasScopeRequirement("delete:product", domain)));
     options.AddPolicy("update:category", policy => policy.Requirements.Add(new HasScopeRequirement("update:category", domain)));
     options.AddPolicy("delete:category", policy => policy.Requirements.Add(new HasScopeRequirement("delete:category", domain)));
+    options.AddPolicy("read:category", policy => policy.Requirements.Add(new HasScopeRequirement("read:category", domain)));
+    options.AddPolicy("post:category", policy => policy.Requirements.Add(new HasScopeRequirement("post:category", domain)));
+    
+    options.AddPolicy("read:products", policy => policy.Requirements.Add(new HasScopeRequirement("read:products", domain)));
+    options.AddPolicy("post:products", policy => policy.Requirements.Add(new HasScopeRequirement("post:products", domain)));
+    options.AddPolicy("update:product", policy => policy.Requirements.Add(new HasScopeRequirement("update:product", domain)));
+    options.AddPolicy("delete:product", policy => policy.Requirements.Add(new HasScopeRequirement("delete:product", domain)));
+    
     options.AddPolicy("read:clients", policy => policy.Requirements.Add(new HasScopeRequirement("read:clients", domain)));
     options.AddPolicy("post:client", policy => policy.Requirements.Add(new HasScopeRequirement("post:client", domain)));
     options.AddPolicy("update:client", policy => policy.Requirements.Add(new HasScopeRequirement("update:client", domain)));
     options.AddPolicy("delete:client", policy => policy.Requirements.Add(new HasScopeRequirement("delete:client", domain)));
+    
     options.AddPolicy("read:orders", policy => policy.Requirements.Add(new HasScopeRequirement("read:orders", domain)));
     options.AddPolicy("post:orders", policy => policy.Requirements.Add(new HasScopeRequirement("post:orders", domain)));
     options.AddPolicy("update:orders", policy => policy.Requirements.Add(new HasScopeRequirement("update:orders", domain)));
     options.AddPolicy("delete:orders", policy => policy.Requirements.Add(new HasScopeRequirement("delete:orders", domain)));
+    
     options.AddPolicy("read:rate", policy => policy.Requirements.Add(new HasScopeRequirement("read:rate", domain)));
     options.AddPolicy("post:rate", policy => policy.Requirements.Add(new HasScopeRequirement("post:rate", domain)));
     options.AddPolicy("update:rate", policy => policy.Requirements.Add(new HasScopeRequirement("update:rate", domain)));
     options.AddPolicy("delete:rate", policy => policy.Requirements.Add(new HasScopeRequirement("delete:rate", domain)));
+    
     options.AddPolicy("read:store", policy => policy.Requirements.Add(new HasScopeRequirement("read:store", domain)));
     options.AddPolicy("update:store", policy => policy.Requirements.Add(new HasScopeRequirement("update:store", domain)));
     options.AddPolicy("post:store", policy => policy.Requirements.Add(new HasScopeRequirement("post:store", domain)));
