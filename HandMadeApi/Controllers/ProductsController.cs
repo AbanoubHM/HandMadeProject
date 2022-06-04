@@ -31,7 +31,7 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Products
         [HttpGet]
-        [Authorize("read:products")]
+       // [Authorize("read:products")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string sort, string search, int categoryid, string storeid, int minprice, int maxprice,int pagesize=12,int pagenumber=1)
         {
           
@@ -60,7 +60,7 @@ namespace HandMadeApi.Controllers
         }
         // GET: api/Products/1/rate
         [HttpGet("{id}/Reviews")]
-        [Authorize]
+       // [Authorize]
         public async Task<ActionResult<IEnumerable<ProductRate>>> GetProductRate(int id)
         {
             var productRates = await _context.ProductRates.Where(p => p.ProductID == id).ToListAsync();
@@ -94,7 +94,7 @@ namespace HandMadeApi.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        [Authorize("read:product")]
+       // [Authorize("read:product")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
 
@@ -110,7 +110,7 @@ namespace HandMadeApi.Controllers
 
         // PUT: api/Products/5
         [HttpPut("{id}")]
-        [Authorize("update:product")]
+       // [Authorize("update:product")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
             if (id != product.ID)
@@ -139,7 +139,7 @@ namespace HandMadeApi.Controllers
         }
 
         [HttpPost("/upload")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> uploadFile(IFormFile file) {
             try {
                 Stream stream1 = new FileStream($"{Directory.GetCurrentDirectory()}/abc",
@@ -173,7 +173,7 @@ namespace HandMadeApi.Controllers
 
         // POST: api/Products
         [HttpPost]
-        [Authorize("post:products")]
+       // [Authorize("post:products")]
         public async Task<ActionResult<ProductsDTO>> PostProduct(ProductsDTO product)
         {
             
@@ -198,7 +198,7 @@ namespace HandMadeApi.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
-        [Authorize("delete:product")]
+        //[Authorize("delete:product")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
